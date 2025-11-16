@@ -1,20 +1,20 @@
 # frozen_string_literal: true
 
-# name: discourse-plugin-name
+# name: discourse-static-pages-sync
 # about: TODO
 # meta_topic_id: TODO
 # version: 0.0.1
-# authors: Discourse
+# authors: NateDhaliwal
 # url: TODO
 # required_version: 2.7.0
 
 enabled_site_setting :plugin_name_enabled
 
-module ::MyPluginModule
-  PLUGIN_NAME = "discourse-plugin-name"
+module ::DiscourseStaticPagesSync
+  PLUGIN_NAME = "discourse-static-pages-sync"
 end
 
-require_relative "lib/my_plugin_module/engine"
+require_relative "lib/discourse_static_pages_sync/engine"
 
 after_initialize do
   # Code which should run after Rails has finished booting
