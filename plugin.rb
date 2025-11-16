@@ -8,7 +8,7 @@
 # url: TODO
 # required_version: 2.7.0
 
-enabled_site_setting :plugin_name_enabled
+enabled_site_setting :discourse_static_pages_sync_enabled
 
 module ::DiscourseStaticPagesSync
   PLUGIN_NAME = "discourse-static-pages-sync"
