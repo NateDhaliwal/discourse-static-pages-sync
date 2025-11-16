@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-module ::MyPluginModule
+module ::DiscourseStaticPagesSync
   class Engine < ::Rails::Engine
-    engine_name PLUGIN_NAME
-    isolate_namespace MyPluginModule
+    engine_name discourse_static_pages_sync
+    isolate_namespace DiscourseStaticPagesSync
     config.autoload_paths << File.join(config.root, "lib")
     scheduled_job_dir = "#{config.root}/app/jobs/scheduled"
     config.to_prepare do
