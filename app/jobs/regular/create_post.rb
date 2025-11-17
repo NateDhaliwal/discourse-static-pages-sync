@@ -1,5 +1,5 @@
 module DiscourseStaticPagesSync
-  class CreatePost < ::Regular
+  class CreatePost < ::Jobs::Regular
     def execute(args)
       post_type = args.post_type
       author = args.post.author.username
