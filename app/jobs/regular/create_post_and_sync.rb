@@ -1,4 +1,4 @@
-module DiscourseStaticPagesSync
+module ::Jobs
   class CreatePostAndSync < ::Jobs::Base
     def execute(args)
       post_type = args[:post_type]
