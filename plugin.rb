@@ -26,6 +26,7 @@ after_initialize do
     Jobs.enqueue(
       :create_post_and_sync,
       type: "topic",
+      operation: "create",
       title: topic[:title],
       topic_id: topic[:id],
       user_id: topic[:user_id],
@@ -40,6 +41,7 @@ after_initialize do
     Jobs.enqueue(
       :create_post_and_sync,
       type: "post",
+      operation: "create",
       user_id: post[:user_id],
       topic_id: post[:topic_id],
       cooked: post[:cooked],
@@ -53,8 +55,9 @@ after_initialize do
   # We will check if the post_number is 1, if it is, it is the OP
   on(:post_edited) do |post|
     Jobs.enqueue(
-      :update_post_and_sync,
+      :create_post_and_sync,
       type: post[:post_number] == 1 ? "topic" : "post",
+      operation: "update",
       user_id: post[:user_id],
       topic_id: post[:post_number] == 1 ? post[:id] : post[:topic_id],
       cooked: post[:cooked],
