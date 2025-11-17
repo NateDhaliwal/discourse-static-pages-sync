@@ -51,22 +51,22 @@ module ::Jobs
       end
 
       if post_type == "topic" then
-        content = SiteSetting.topic_post_template.sub!(
+        content = SiteSetting.topic_post_template.sub(
           "@{post_type}",
           post_type
-        ).sub!(
+        ).sub(
           "@{topic_name}",
           topic_name
-        ).sub!(
+        ).sub(
           "@{topic_id}",
-          topic_id
-        ).sub!(
+          topic_id.to_s
+        ).sub(
           "@{category_name}",
           category_name
-        ).sub!(
+        ).sub(
           "@{created_at}",
           created_at
-        ).sub!(
+        ).sub(
           "@{updated_at}",
           updated_at
         )
@@ -75,22 +75,22 @@ module ::Jobs
         #   whisper
         # )
       else
-        content = SiteSetting.reply_post_template.sub!(
+        content = SiteSetting.reply_post_template.sub(
           "@{post_type}",
           post_type
-        ).sub!(
+        ).sub(
           "@{topic_name}",
           topic_name
-        ).sub!(
+        ).sub(
           "@{topic_id}",
-          topic_id
-        ).sub!(
+          topic_id.to_s
+        ).sub(
           "@{created_at}",
           created_at
-        ).sub!(
+        ).sub(
           "@{updated_at}",
           updated_at
-        ).sub!(
+        ).sub(
           "@{whisper}",
           whisper
         )
