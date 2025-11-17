@@ -116,7 +116,7 @@ module ::Jobs
             "name": SiteSetting.github_committer_username,
             "email": SiteSetting.github_committer_email
           },
-          :content => cooked_encoded,
+          :content => content_encoded,
         }
       else
         req_body = {
