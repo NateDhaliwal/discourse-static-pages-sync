@@ -49,6 +49,21 @@ after_initialize do
     )
   end
 
+  # This will be for topics and posts
+  # We will check if the post_number is 1, if it is, it is the OP
+  on(:post_edited) do |post|
+    Jobs.enqueue(
+      :update_post_and_sync,
+      type: post[:post_number] == 1 ? "topic" : "post",
+      user_id: post[:user_id],
+      topic_id: post[:post_number] == 1 ? post[:id] : post[:topic_id],
+      cooked: post[:cooked],
+      created_at: post[:created_at],
+      updated_at: post[:updated_at],
+      whisper: post[:post_type] == 4
+    )
+  end
+
   on(:topic_destroyed) do |topic|
     Jobs.enqueue(
       :destroy_post_and_sync,
