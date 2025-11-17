@@ -3,7 +3,7 @@ en:
     admin:
       site_settings:
         categories:
-          TODO_plugin_name: "Plugin Name"
+          discourse_static_pages_sync: "Discourse Static Pages Sync"
   js:
     discourse_plugin_name:
       placeholder: placeholder
