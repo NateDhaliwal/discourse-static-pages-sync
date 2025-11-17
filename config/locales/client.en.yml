@@ -4,6 +4,10 @@ en:
       site_settings:
         categories:
           discourse_static_pages_sync: "Discourse Static Pages Sync"
+          github_committer_username: "Username of the user committing files"
+          github_committer_email: "Email of the user committing files"
+          github_access_token: "Access token of the user committing files, with write access"
+          delete_post_file_when_post_deleted: "Delete the related post/topic file(s) when a post/topic is deleted"
   js:
     discourse_plugin_name:
       placeholder: placeholder
