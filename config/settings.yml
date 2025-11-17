@@ -15,6 +15,10 @@ discourse_static_pages_sync:
     default: ""
     secret: true
 
+  target_github_repo:
+    default: ""
+    type: string
+
   delete_post_file_when_post_deleted:
     default: true
     type: bool
@@ -38,7 +42,7 @@ discourse_static_pages_sync:
       @{post_content}
     
     type: string
-    multiline: true
+    textarea: true
 
   reply_post_template:
     default: |
@@ -55,4 +59,4 @@ discourse_static_pages_sync:
       @{post_content}
     
     type: string
-    multiline: true
+    textarea: true
