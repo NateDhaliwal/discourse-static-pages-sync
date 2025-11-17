@@ -23,6 +23,7 @@ after_initialize do
   ].each { |path| require File.expand_path(path, __FILE__) }
   
   on(:topic_created) do |topic|
+    puts topic[:category_id]
     Jobs.enqueue(
       :create_post_and_sync,
       post_type: "topic",
