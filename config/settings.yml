@@ -17,4 +17,4 @@ discourse_static_pages_sync:
 
   delete_post_file_when_post_deleted:
     default: true
-    client: true
+    type: bool
