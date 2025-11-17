@@ -27,7 +27,7 @@ module ::Jobs
       category_name = post_type == "topic" ? Category.find_by(id: args[:category_id]).name : nil
 
       topic_id = post_type == "topic" ? args[:id] : args[:topic_id]
-      topic_name = Topic.find_by(id: topic_id).name
+      topic_name = Topic.find_by(id: topic_id).title
 
       created_at = args[:created_at]
       updated_at = args[:updated_at]
