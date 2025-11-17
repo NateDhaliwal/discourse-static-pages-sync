@@ -96,14 +96,15 @@ module ::Jobs
         )
       end
 
+      puts cooked
       puts content
-      content.sub!("@{post_content}", cooked)
+      content = content.sub("@{post_content}", cooked.to_s)
       puts content
       content_encoded = Base64.encode64(content) # Github needs text in Base64
 
       file_path = post_type == "topic" ? SiteSetting.topic_post_path : SiteSetting.reply_post_path
-      file_path.sub!("@{category}", category_name)
-      file_path.sub!("@{topic_name}", topic_name)
+      file_path = file_path.su!("@{category}", category_name)
+      file_path = file_path.sub("@{topic_name}", topic_name)
 
       req_body = {}
       if operation == "create" then
