@@ -86,12 +86,12 @@ after_initialize do
     Jobs.enqueue(
       :destroy_post_and_sync,
       post_type: "topic",
-      title: topic[:title],
-      topic_id: topic[:id],
-      user_id: topic[:user_id],
-      cooked: topic[:cooked],
-      created_at: topic[:created_at],
-      updated_at: topic[:updated_at],
+      title: post[:title],
+      topic_id: post[:id],
+      user_id: post[:user_id],
+      cooked: post[:cooked],
+      created_at: post[:created_at],
+      updated_at: post[:updated_at],
       whisper: post[:post_type] == 4
     )
   end
