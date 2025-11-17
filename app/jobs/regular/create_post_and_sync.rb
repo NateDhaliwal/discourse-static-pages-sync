@@ -31,6 +31,8 @@ module ::Jobs
 
       created_at = args[:created_at]
       updated_at = args[:updated_at]
+
+      post_number = args[:post_number]
       whisper = args[:whisper]
       
       cooked = args[:cooked]
@@ -102,7 +104,7 @@ module ::Jobs
       puts content
       content_encoded = Base64.encode64(content) # Github needs text in Base64
 
-      file_path = post_type == "topic" ? SiteSetting.topic_post_path : SiteSetting.reply_post_path
+      file_path = post_type == "topic" ? SiteSetting.topic_post_path : SiteSetting.reply_post_path.sub("@{post_number}", post_number)
       file_path = file_path.sub("@{category}", category_name)
       file_path = file_path.sub("@{topic_name}", topic_name)
 
