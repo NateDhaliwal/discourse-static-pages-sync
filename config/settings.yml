@@ -19,7 +19,7 @@ discourse_static_pages_sync:
     default: true
     type: bool
 
-  log_when_post_synced:
+  log_when_post_uploaded:
     default: false
     type: bool    
 
