@@ -26,8 +26,8 @@ after_initialize do
     Jobs.enqueue(
       :create_post_and_sync,
       post_type: "topic",
-      title: topic[:title]
-      topic_id: topic[:id]
+      title: topic[:title],
+      topic_id: topic[:id],
       user_id: topic[:user_id],
       cooked: topic[:cooked],
       created_at: topic[:created_at],
@@ -66,8 +66,8 @@ after_initialize do
     Jobs.enqueue(
       :destroy_post_and_sync,
       post_type: "topic",
-      title: topic[:title]
-      topic_id: topic[:id]
+      title: topic[:title],
+      topic_id: topic[:id],
       user_id: topic[:user_id],
       cooked: topic[:cooked],
       created_at: topic[:created_at],
