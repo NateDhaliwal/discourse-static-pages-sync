@@ -9,5 +9,5 @@ en:
           github_access_token: "Access token of the user committing files, with write access"
           delete_post_file_when_post_deleted: "Delete the related post/topic file(s) when a post/topic is deleted"
   js:
-    discourse_plugin_name:
-      placeholder: placeholder
+    discourse_static_pages_sync:
+      title: "Discourse Static Pages Sync"
