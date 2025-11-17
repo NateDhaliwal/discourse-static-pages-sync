@@ -1,0 +1,52 @@
+discourse_static_pages_sync:
+  discourse_static_pages_sync_enabled:
+    default: false
+    client: true
+
+  github_committer_username:
+    default: ""
+    type: string
+
+  github_committer_email:
+    default: ""
+    type: email
+
+  github_access_token:
+    default: ""
+    secret: true
+
+  delete_post_file_when_post_deleted:
+    default: true
+    type: bool
+
+  log_when_post_synced:
+    default: false
+    type: bool    
+
+  topic_post_template:
+    default: |
+      ---
+      post_type: @{post_type}
+      topic_name: @{topic_name}
+      topic_id: @{topic_id}
+      category: @{category_name}
+      author: @{username}
+      created_at: @{created_at}
+      updated_at: @{updated_at}
+      ---
+    type: string
+    multiline: true
+
+  reply_post_template:
+    default: |
+      ---
+      post_type: @{post_type}
+      topic_name: @{topic_name}
+      topic_id: @{topic_id}
+      author: @{username}
+      created_at: @{created_at}
+      updated_at: @{updated_at}
+      whisper: @{whisper}
+      ---
+    type: string
+    multiline: true
