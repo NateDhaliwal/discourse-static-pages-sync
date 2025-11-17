@@ -35,7 +35,8 @@ after_initialize do
       cooked: topic[:cooked],
       created_at: topic[:created_at],
       updated_at: topic[:updated_at],
-      whisper: topic[:post_type] == 4
+      whisper: topic[:post_type] == 4,
+      post_number: post[:post_number]
     )
   end
 
@@ -49,7 +50,8 @@ after_initialize do
       cooked: post[:cooked],
       created_at: post[:created_at],
       updated_at: post[:updated_at],
-      whisper: post[:post_type] == 4
+      whisper: post[:post_type] == 4,
+      post_number: post[:post_number]
     )
   end
 
