@@ -22,7 +22,7 @@ module ::Jobs
       content = ""
 
       if post_type == "topic" then
-        content = SiteSetting.file_template.sub(
+        content = SiteSetting.topic_post_template.sub(
           "@{post_type}",
           post_type
         ).sub!(
@@ -46,7 +46,7 @@ module ::Jobs
         #   whisper
         # )
       else
-        content = SiteSetting.file_template.sub(
+        content = SiteSetting.reply_post_template.sub(
           "@{post_type}",
           post_type
         ).sub!(
