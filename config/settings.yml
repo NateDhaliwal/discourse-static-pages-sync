@@ -61,7 +61,7 @@ discourse_static_pages_sync:
     textarea: true
 
   topic_post_path:
-    default: "/@{category}/@{topic_name}.md
+    default: "/@{category}/@{topic_name}.md"
     type: string
   
   reply_post_path:
