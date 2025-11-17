@@ -3,6 +3,7 @@ en:
     github_committer_username: "Username of the user committing files"
     github_committer_email: "Email of the user committing files"
     github_access_token: "Access token of the user committing files, with write access"
+    target_github_repo: "The Github repository where files will be uploaded to"
     delete_post_file_when_post_deleted: "Delete the related post/topic file(s) when a post/topic is deleted"
     log_when_post_synced: "Log when a topic or post is uploaded to Github"
     topic_post_template: "The file template for topic files"
