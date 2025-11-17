@@ -25,54 +25,54 @@ after_initialize do
   on(:topic_created) do |topic|
     Jobs.enqueue(
       :create_post_and_sync,
-      post_type: "topic",
+      type: "topic",
       title: topic[:title],
       topic_id: topic[:id],
       user_id: topic[:user_id],
       cooked: topic[:cooked],
       created_at: topic[:created_at],
       updated_at: topic[:updated_at],
-      visible: topic[:hidden]
+      whisper: topic[:post_type] == 4
     )
   end
 
   on(:post_created) do |post|
     Jobs.enqueue(
       :create_post_and_sync,
-      post_type: "post",
+      type: "post",
       user_id: post[:user_id],
       topic_id: post[:topic_id],
       cooked: post[:cooked],
       created_at: post[:created_at],
       updated_at: post[:updated_at],
-      hidden: post[:hidden]
+      whisper: topic[:post_type] == 4
     )
   end
 
   on(:topic_destroyed) do |topic|
     Jobs.enqueue(
       :destroy_post_and_sync,
-      post_type: "topic",
+      type: "topic",
       user_id: topic[:user_id],
       topic_id: topic[:topic_id],
       cooked: topic[:cooked],
       created_at: topic[:created_at],
       updated_at: topic[:updated_at],
-      hidden: topic[:hidden]
+      whisper: topic[:post_type] == 4
     )
   end
 
   on(:post_destroyed) do |post|
     Jobs.enqueue(
       :destroy_post_and_sync,
-      post_type: "topic",
+      type: "topic",
       title: topic[:title],
       topic_id: topic[:id],
       user_id: topic[:user_id],
       cooked: topic[:cooked],
       created_at: topic[:created_at],
       updated_at: topic[:updated_at],
-      visible: topic[:hidden]
+      whisper: topic[:post_type] == 4
     )
   end
 end
