@@ -34,6 +34,7 @@ module ::Jobs
       whisper = args[:whisper]
       
       cooked = args[:cooked]
+      puts cooked
       content = ""
 
       sha = ""
@@ -95,7 +96,8 @@ module ::Jobs
           whisper
         )
       end
-      
+
+      puts content
       content.sub!("@{content}", cooked)
       content_encoded = Base64.encode64(content) # Github needs text in Base64
 
