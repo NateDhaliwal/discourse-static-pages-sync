@@ -26,7 +26,13 @@ after_initialize do
     Jobs.enqueue(
       :create_post_and_sync,
       post_type: "topic",
-      post: topic
+      title: topic[:title]
+      topic_id: topic[:id]
+      user_id: topic[:user_id],
+      cooked: topic[:cooked],
+      created_at: topic[:created_at],
+      updated_at: topic[:updated_at],
+      visible: topic[:hidden]
     )
   end
 
@@ -34,7 +40,12 @@ after_initialize do
     Jobs.enqueue(
       :create_post_and_sync,
       post_type: "post",
-      post: post
+      user_id: post[:user_id],
+      topic_id: post[:topic_id],
+      cooked: post[:cooked],
+      created_at: post[:created_at],
+      updated_at: post[:updated_at],
+      hidden: post[:hidden]
     )
   end
 
@@ -42,15 +53,26 @@ after_initialize do
     Jobs.enqueue(
       :destroy_post_and_sync,
       post_type: "topic",
-      post: topic
+      user_id: topic[:user_id],
+      topic_id: topic[:topic_id],
+      cooked: topic[:cooked],
+      created_at: topic[:created_at],
+      updated_at: topic[:updated_at],
+      hidden: topic[:hidden]
     )
   end
 
   on(:post_destroyed) do |post|
     Jobs.enqueue(
       :destroy_post_and_sync,
-      post_type: "post",
-      post: post
+      post_type: "topic",
+      title: topic[:title]
+      topic_id: topic[:id]
+      user_id: topic[:user_id],
+      cooked: topic[:cooked],
+      created_at: topic[:created_at],
+      updated_at: topic[:updated_at],
+      visible: topic[:hidden]
     )
   end
 end
