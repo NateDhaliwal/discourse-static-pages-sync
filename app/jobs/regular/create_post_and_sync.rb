@@ -42,7 +42,7 @@ module ::Jobs
         resp = ""
         while !passed do
           resp = conn.get("/repos/#{repo_user}/#{repo_name}/contents/#{file_path}")
-          if resp.status == 200:
+          if resp.status == 200 then
             passed = true
             break
           end
