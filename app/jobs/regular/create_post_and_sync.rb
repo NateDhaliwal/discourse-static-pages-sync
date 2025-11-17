@@ -96,7 +96,9 @@ module ::Jobs
         )
       end
 
+      puts content
       content.sub!("@{post_content}", cooked)
+      puts content
       content_encoded = Base64.encode64(content) # Github needs text in Base64
 
       file_path = post_type == "topic" ? SiteSetting.topic_post_path : SiteSetting.reply_post_path
