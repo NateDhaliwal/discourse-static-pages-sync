@@ -30,6 +30,7 @@ after_initialize do
       title: topic[:title],
       topic_id: topic[:id],
       user_id: topic[:user_id],
+      category_id: topic[:category_id],
       cooked: topic[:cooked],
       created_at: topic[:created_at],
       updated_at: topic[:updated_at],
