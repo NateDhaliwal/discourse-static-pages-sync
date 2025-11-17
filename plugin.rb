@@ -25,7 +25,7 @@ after_initialize do
   on(:topic_created) do |topic|
     Jobs.enqueue(
       :create_post_and_sync,
-      type: "topic",
+      post_type: "topic",
       operation: "create",
       title: topic[:title],
       topic_id: topic[:id],
@@ -40,7 +40,7 @@ after_initialize do
   on(:post_created) do |post|
     Jobs.enqueue(
       :create_post_and_sync,
-      type: "post",
+      post_type: "post",
       operation: "create",
       user_id: post[:user_id],
       topic_id: post[:topic_id],
@@ -56,7 +56,7 @@ after_initialize do
   on(:post_edited) do |post|
     Jobs.enqueue(
       :create_post_and_sync,
-      type: post[:post_number] == 1 ? "topic" : "post",
+      post_type: post[:post_number] == 1 ? "topic" : "post",
       operation: "update",
       user_id: post[:user_id],
       topic_id: post[:post_number] == 1 ? post[:id] : post[:topic_id],
@@ -70,7 +70,7 @@ after_initialize do
   on(:topic_destroyed) do |topic|
     Jobs.enqueue(
       :destroy_post_and_sync,
-      type: "topic",
+      post_type: "topic",
       user_id: topic[:user_id],
       topic_id: topic[:topic_id],
       cooked: topic[:cooked],
@@ -83,7 +83,7 @@ after_initialize do
   on(:post_destroyed) do |post|
     Jobs.enqueue(
       :destroy_post_and_sync,
-      type: "topic",
+      post_type: "topic",
       title: topic[:title],
       topic_id: topic[:id],
       user_id: topic[:user_id],
