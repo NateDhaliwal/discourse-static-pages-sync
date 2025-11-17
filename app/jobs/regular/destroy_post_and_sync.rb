@@ -1,5 +1,5 @@
 module DiscourseStaticPagesSync
-  class DestroyPost < ::Jobs::Regular
+  class DestroyPostAndSync < ::Jobs::Regular
     def execute(args)
       post_type = args[:post_type]
       author = args[:post][:author][:username]
