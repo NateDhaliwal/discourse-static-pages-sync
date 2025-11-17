@@ -34,6 +34,9 @@ discourse_static_pages_sync:
       created_at: @{created_at}
       updated_at: @{updated_at}
       ---
+
+      @{post_content}
+    
     type: string
     multiline: true
 
@@ -48,5 +51,8 @@ discourse_static_pages_sync:
       updated_at: @{updated_at}
       whisper: @{whisper}
       ---
+
+      @{post_content}
+    
     type: string
     multiline: true
