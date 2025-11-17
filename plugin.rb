@@ -20,7 +20,7 @@ after_initialize do
   on(:topic_created) do |topic|
     Jobs.enqueue(
       :create_post,
-      post_type: "topic"
+      post_type: "topic",
       post: topic
     )
   end
@@ -28,7 +28,7 @@ after_initialize do
   on(:post_created) do post
     Jobs.enqueue(
       :create_post,
-      post_type: "post"
+      post_type: "post",
       post: post
     )
   end
@@ -36,7 +36,7 @@ after_initialize do
   on(:topic_destroyed) do |topic|
     Jobs.enqueue(
       :destroy_post,
-      post_type: "topic"
+      post_type: "topic",
       post: topic
     )
   end
@@ -44,7 +44,7 @@ after_initialize do
   on(:post_destroyed) do post
     Jobs.enqueue(
       :destroy_post,
-      post_type: "post"
+      post_type: "post",
       post: post
     )
   end
