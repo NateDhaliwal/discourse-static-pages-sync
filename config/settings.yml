@@ -3,6 +3,10 @@ discourse_static_pages_sync:
     default: false
     client: true
 
+  commit_message:
+    default: "Sync topic with forum"
+    type: string
+
   github_committer_username:
     default: ""
     type: string
