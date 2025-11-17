@@ -135,7 +135,7 @@ module ::Jobs
         Rails.logger.info "Topic '#{topic_name}' has been #{operation == "create" ? "uploaded" : "updated"}"
       elsif resp.status == 422 or resp.status == 403 then # Job failed
         Rails.logger.error "An error occurred when trying to upload or update '#{topic_name}': #{resp.body}"
-        if resp.headers["x-ratelimit-remaining"].to_i == 0: # Rate limit reached
+        if resp.headers["x-ratelimit-remaining"].to_i == 0 then # Rate limit reached
           time_reset = Time.at(1659645535)
           time_now = Time.now()
           wait_before_retry_min = 60 # 60 seconds
