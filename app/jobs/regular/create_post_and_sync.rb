@@ -37,10 +37,10 @@ module ::Jobs
       content = ""
 
       sha = ""
-      if operation == "update" do
+      if operation == "update" then
         passed = false
         resp = ""
-        while !passed then
+        while !passed do
           resp = conn.get("/repos/#{repo_user}/#{repo_name}/contents/#{file_path}")
           if resp.status == 200:
             passed = true
