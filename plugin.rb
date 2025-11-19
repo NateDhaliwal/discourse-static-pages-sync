@@ -36,7 +36,7 @@ after_initialize do
       created_at: topic[:created_at],
       updated_at: topic[:updated_at],
       whisper: topic[:post_type] == 4,
-      post_number: post[:post_number]
+      post_number: topic[:post_number]
     )
   end
 
