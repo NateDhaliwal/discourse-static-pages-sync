@@ -111,21 +111,21 @@ module ::Jobs
       req_body = {}
       if operation == "create" then
         req_body = {
-          :message => SiteSetting.commit_message,
-          :committer => {
+          message: SiteSetting.commit_message,
+          committer: {
             "name": SiteSetting.github_committer_username,
             "email": SiteSetting.github_committer_email
           },
-          :content => content_encoded,
+          content: content_encoded,
         }
       else
         req_body = {
-          :message => SiteSetting.commit_message,
-          :committer => {
+          message: SiteSetting.commit_message,
+          committer: {
             "name": SiteSetting.github_committer_username,
             "email": SiteSetting.github_committer_email
           },
-          :sha => sha,
+          sha: sha,
         }
       end
 
@@ -136,9 +136,9 @@ module ::Jobs
         json_req_body
       )
 
-      if (resp.status == 200 or resp.status == 201) and SiteSetting.log_when_post_uploaded then
+      if ((resp.status == 200) || (resp.status == 201)) && SiteSetting.log_when_post_uploaded then
         Rails.logger.info "Topic '#{topic_name}' has been #{operation == "create" ? "uploaded" : "updated"}"
-      elsif resp.status == 422 or resp.status == 403 then # Job failed
+      elsif (resp.status == 422) || (resp.status == 403) then # Job failed
         Rails.logger.error "An error occurred when trying to upload or update '#{topic_name}': #{resp.body}"
         if resp.headers["x-ratelimit-remaining"].to_i == 0 then # Rate limit reached
           time_reset = Time.at(1659645535)
