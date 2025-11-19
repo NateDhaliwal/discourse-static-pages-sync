@@ -71,6 +71,9 @@ module ::Jobs
         ).sub(
           "@{updated_at}",
           updated_at
+        ).sub(
+          "@{post_content}",
+          cooked.to_s
         )
         # ).sub!(
         #   "@{whisper}",
@@ -95,18 +98,22 @@ module ::Jobs
         ).sub(
           "@{whisper}",
           whisper
+        ).sub(
+          "@{post_content}",
+          cooked.to_s
         )
       end
 
-      puts cooked
-      puts content
-      content = content.sub("@{post_content}", cooked.to_s)
-      puts content
       content_encoded = Base64.encode64(content) # Github needs text in Base64
 
       file_path = post_type == "topic" ? SiteSetting.topic_post_path : SiteSetting.reply_post_path.sub("@{post_number}", post_number)
-      file_path = file_path.sub("@{category}", category_name)
-      file_path = file_path.sub("@{topic_name}", topic_name)
+      if file_path.include? "@{category}" then
+        file_path = file_path.sub("@{category}", category_name)
+      end
+
+      if file_path.include? "@{topic_name}" then
+        file_path = file_path.sub("@{topic_name}", topic_name)
+      end
 
       req_body = {}
       if operation == "create" then
