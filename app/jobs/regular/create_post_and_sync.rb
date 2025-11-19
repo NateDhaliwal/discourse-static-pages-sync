@@ -148,10 +148,11 @@ module ::Jobs
       elsif resp.status == 422 or resp.status == 403 then # Job failed
         Rails.logger.error "An error occurred when trying to upload or update '#{topic_name}': #{resp.body}"
         if resp.headers["x-ratelimit-remaining"].to_i == 0 then # Rate limit reached
-          time_reset = Time.at(1659645535)
+          time_reset = Time.at(resp.headers["x-ratelimit-remaining"].to_i)
           time_now = Time.now()
+          time_until_reset = time_reset - time_now # In seconds
           wait_before_retry_min = 60 # 60 seconds
-          wait_before_retry = [time_reset - time_now, wait_before_retry_min].max
+          wait_before_retry = [time_until_reset, wait_before_retry_min].max
           Jobs.enqueue_in(wait_before_retry, :create_post_and_sync, args)
         end
       else # Other issues
