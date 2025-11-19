@@ -71,6 +71,9 @@ module ::Jobs
         ).sub(
           "@{updated_at}",
           updated_at
+        ).sub(
+          "@{post_content}",
+          cooked.to_s
         )
         # ).sub!(
         #   "@{whisper}",
@@ -95,18 +98,22 @@ module ::Jobs
         ).sub(
           "@{whisper}",
           whisper
+        ).sub(
+          "@{post_content}",
+          cooked.to_s
         )
       end
 
-      puts cooked
-      puts content
-      content = content.sub("@{post_content}", cooked.to_s)
-      puts content
       content_encoded = Base64.encode64(content) # Github needs text in Base64
 
       file_path = post_type == "topic" ? SiteSetting.topic_post_path : SiteSetting.reply_post_path.sub("@{post_number}", post_number)
-      file_path = file_path.sub("@{category}", category_name)
-      file_path = file_path.sub("@{topic_name}", topic_name)
+      if file_path.include? "@{category}" then
+        file_path = file_path.sub("@{category}", category_name)
+      end
+
+      if file_path.include? "@{topic_name}" then
+        file_path = file_path.sub("@{topic_name}", topic_name)
+      end
 
       req_body = {}
       if operation == "create" then
@@ -141,10 +148,11 @@ module ::Jobs
       elsif (resp.status == 422) || (resp.status == 403) then # Job failed
         Rails.logger.error "An error occurred when trying to upload or update '#{topic_name}': #{resp.body}"
         if resp.headers["x-ratelimit-remaining"].to_i == 0 then # Rate limit reached
-          time_reset = Time.at(1659645535)
+          time_reset = Time.at(resp.headers["x-ratelimit-remaining"].to_i)
           time_now = Time.now()
+          time_until_reset = time_reset - time_now # In seconds
           wait_before_retry_min = 60 # 60 seconds
-          wait_before_retry = [time_reset - time_now, wait_before_retry_min].max
+          wait_before_retry = [time_until_reset, wait_before_retry_min].max
           Jobs.enqueue_in(wait_before_retry, :create_post_and_sync, args)
         end
       else # Other issues
