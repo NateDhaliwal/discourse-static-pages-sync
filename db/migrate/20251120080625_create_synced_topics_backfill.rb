@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class CreateSyncedTopicsBackfill < ActiveRecord::Migration[8.0]
   def change
     create_table :synced_topics_backfill do |t|
