@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module ::DiscourseChatbot
-  class TopicEmbeddingsBookmark < ActiveRecord::Base
+  class SyncedTopicsBackfill < ActiveRecord::Base
     self.table_name = 'synced_topics_backfill'
 
     validates :topic_id, presence: true
