@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module ::DiscourseChatbot
+module ::DiscourseStaticPagesSync
   class SyncedTopicsBackfill < ActiveRecord::Base
     self.table_name = 'synced_topics_backfill'
 
