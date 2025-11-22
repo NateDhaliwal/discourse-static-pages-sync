@@ -64,6 +64,8 @@ module ::Jobs
         content = SiteSetting.reply_post_template
       end
 
+      puts content
+
       if content.include? "@{post_type}" then
         content = content.sub(
           "@{post_type}",
