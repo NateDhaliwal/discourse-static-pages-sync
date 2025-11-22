@@ -117,7 +117,7 @@ module ::Jobs
 
       content_encoded = Base64.encode64(content) # Github needs text in Base64
 
-      file_path = post_type == "topic" ? SiteSetting.topic_post_path : SiteSetting.reply_post_path.sub("@{post_number}", post_number)
+      file_path = post_type == "topic" ? SiteSetting.topic_post_path : SiteSetting.reply_post_path.sub("@{post_number}", post_number.to_s)
       if file_path.include? "@{category}" then
         file_path = file_path.sub("@{category}", category_name)
       end
