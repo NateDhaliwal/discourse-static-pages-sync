@@ -23,7 +23,7 @@ after_initialize do
     ../app/models/discourse_static_pages_sync/synced_topics_backfill.rb
   ].each { |path| require File.expand_path(path, __FILE__) }
 
-  last_synced = SyncedTopicsBackfill.first
+  last_synced = DiscourseStaticPagesSync::SyncedTopicsBackfill.first
 
   # Check if backfill job has been ran before
   if last_synced then
@@ -73,7 +73,7 @@ after_initialize do
     end
   else
     # Create last_synced
-    last_synced_new = SyncedTopicsBackfill.create(topic_id: Topic.last.id) # Most recent topic
+    last_synced_new = DiscourseStaticPagesSync::SyncedTopicsBackfill.create(topic_id: Topic.last.id) # Most recent topic
 
     last_synced_id = last_synced_new.topic_id
     # Start the backfill
