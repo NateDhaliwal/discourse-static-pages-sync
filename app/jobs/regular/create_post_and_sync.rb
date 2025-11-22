@@ -105,7 +105,7 @@ module ::Jobs
       if content.include? "@{whisper}" then
         content = content.sub(
           "@{whisper}",
-          whisper
+          whisper.to_s
         )
       end
       if content.include? "@{post_content}" then
