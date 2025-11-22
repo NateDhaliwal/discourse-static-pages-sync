@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module DiscourseStaticPagesSync
   class BackfillSyncTopics < ::Jobs::Scheduled
     every 24.hours
