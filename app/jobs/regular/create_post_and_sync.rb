@@ -162,8 +162,12 @@ module ::Jobs
         json_req_body
       )
 
-      if ((resp.status == 200) || (resp.status == 201)) && SiteSetting.log_when_post_uploaded then
-        Rails.logger.info "Topic '#{topic_name}' has been #{operation == "create" ? "uploaded" : "updated"}"
+      puts "Request sent to /repos/#{repo_user}/#{repo_name}/contents/#{file_path}"
+
+      if (resp.status == 200) || (resp.status == 201) then
+        if SiteSetting.log_when_post_uploaded then
+          Rails.logger.info "Topic '#{topic_name}' has been #{operation == "create" ? "uploaded" : "updated"}"
+        end
       elsif (resp.status == 422) || (resp.status == 403) then # Job failed
         Rails.logger.error "An error occurred when trying to upload or update '#{topic_name}': #{resp.body}"
         if resp.headers["x-ratelimit-remaining"].to_i == 0 then # Rate limit reached
