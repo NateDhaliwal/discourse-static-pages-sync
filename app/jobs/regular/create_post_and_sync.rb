@@ -15,7 +15,7 @@ module ::Jobs
       repo_name = target_repo.split("https://github.com/")[1].split("/")[1]
 
       conn = Faraday.new(
-        url: "http://api.github.com",
+        url: "https://api.github.com",
         headers: {
           "Accept" => "application/vnd.github+json",
           "Authorization" => SiteSetting.github_access_token,
