@@ -26,14 +26,22 @@ module ::Jobs
       username = User.find_by(id: args[:user_id]).username
       
       category_name = ""
-      if post_type == "topic" && Category.find_by(id: args[:category_id]).name then
+      category_slug = ""
+      if Category.find_by(id: args[:category_id]).name then
         category_name = Category.find_by(id: args[:category_id]).name 
       else
        category_name = "Nil"
       end
 
+      if Category.find_by(id: args[:category_id]).slug then
+        category_slug = Category.find_by(id: args[:category_id]).slug 
+      else
+       category_slug = "Nil"
+      end
+
       topic_id = args[:topic_id]
-      topic_name = Topic.find_by(id: topic_id).title.sub(" ", "-")
+      topic_name = Topic.find_by(id: topic_id).title
+      topic_slug = Topic.find_by(id: topic_id).slug
 
       created_at = args[:created_at]
       updated_at = args[:updated_at]
@@ -118,12 +126,12 @@ module ::Jobs
       content_encoded = Base64.encode64(content) # Github needs text in Base64
 
       file_path = post_type == "topic" ? SiteSetting.topic_post_path : SiteSetting.reply_post_path.sub("@{post_number}", post_number.to_s)
-      if file_path.include? "@{category}" then
-        file_path = file_path.sub("@{category}", category_name)
+      if file_path.include? "@{category_slug}" then
+        file_path = file_path.sub("@{category_slug}", category_slug)
       end
 
-      if file_path.include? "@{topic_name}" then
-        file_path = file_path.sub("@{topic_name}", topic_name)
+      if file_path.include? "@{topic_slug}" then
+        file_path = file_path.sub("@{topic_slug}", topic_slug)
       end
 
       req_body = {}
