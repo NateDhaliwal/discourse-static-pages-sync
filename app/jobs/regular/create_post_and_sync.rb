@@ -116,6 +116,12 @@ module ::Jobs
           whisper.to_s
         )
       end
+      if content.include? "@{author}" then
+        content = content.sub(
+          "@{author}",
+          username
+        )
+      end
       if content.include? "@{post_content}" then
         content = content.sub(
           "@{post_content}",
