@@ -23,16 +23,16 @@ module ::Jobs
         }
       )
       
-      username = User.find_by(id: args[:user_id]).username
+      username = User.find_by(id: args[:user_id])?.username
       category_name = ""
       if post_type == "topic" then
-        category_name = Category.find_by(id: args[:category_id]).name 
+        category_name = Category.find_by(id: args[:category_id])?.name 
       else
        category_name = "Nil"
       end
 
       topic_id = args[:topic_id]
-      topic_name = Topic.find_by(id: topic_id).title.sub(" ", "-")
+      topic_name = Topic.find_by(id: topic_id)?.title?.sub(" ", "-")
 
       created_at = args[:created_at]
       updated_at = args[:updated_at]
@@ -58,52 +58,55 @@ module ::Jobs
       end
 
       if post_type == "topic" then
-        content = SiteSetting.topic_post_template.sub(
+        content = SiteSetting.topic_post_template
+      else
+        content = SiteSetting.reply_post_template
+      end
+
+      if cooked.include?  "@{post_type}" then
+        cooked = cooked.sub(
           "@{post_type}",
           post_type
-        ).sub(
+        )
+      end
+      if cooked.include? "@{topic_name}" then
+        cooked = cooked.sub(
           "@{topic_name}",
           topic_name
-        ).sub(
+        )
+      end
+      if cooked.include? "@{topic_id}" then
+        cooked = cooked.sub(
           "@{topic_id}",
-          topic_id.to_s
-        ).sub(
+          topic_id.to_i
+        )
+      end
+      if cooked.include? "@{category_name}" then
+        cooked = cooked.sub(
           "@{category_name}",
           category_name
-        ).sub(
-          "@{created_at}",
-          created_at
-        ).sub(
-          "@{updated_at}",
-          updated_at
-        ).sub(
-          "@{post_content}",
-          cooked.to_s
         )
-        # ).sub!(
-        #   "@{whisper}",
-        #   whisper
-        # )
-      else
-        content = SiteSetting.reply_post_template.sub(
-          "@{post_type}",
-          post_type
-        ).sub(
-          "@{topic_name}",
-          topic_name
-        ).sub(
-          "@{topic_id}",
-          topic_id.to_s
-        ).sub(
+      end
+      if cooked.include? "@{created_at}" then
+        cooked = cooked.sub(
           "@{created_at}",
           created_at
-        ).sub(
+        )
+      end
+      if cooked.include? "@{updated_at}" then
+        cooked = cooked.sub(
           "@{updated_at}",
           updated_at
-        ).sub(
+        )
+      end
+      if cooked.include? "@{whisper}" then
+        cooked = cooked.sub(
           "@{whisper}",
           whisper
-        ).sub(
+        )
+      end
+      if cooked.include? "@{post_content}" then
+        cooked = cooked.sub(
           "@{post_content}",
           cooked.to_s
         )
