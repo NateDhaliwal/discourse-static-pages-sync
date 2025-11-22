@@ -29,7 +29,12 @@ discourse_static_pages_sync:
 
   log_when_post_uploaded:
     default: false
-    type: bool    
+    type: bool
+
+  backfill_sync_topics_count:
+    default: 200
+    type: integer
+    min: 1
 
   topic_post_template:
     default: |
@@ -44,7 +49,6 @@ discourse_static_pages_sync:
       ---
 
       @{post_content}
-    
     type: string
     textarea: true
 
