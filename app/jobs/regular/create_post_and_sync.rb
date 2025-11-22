@@ -81,7 +81,7 @@ module ::Jobs
       if content.include? "@{topic_id}" then
         content = content.sub(
           "@{topic_id}",
-          topic_id.to_i
+          topic_id.to_s
         )
       end
       if content.include? "@{category_name}" then
