@@ -170,7 +170,6 @@ module ::Jobs
 
       puts "Request sent to /repos/#{repo_user}/#{repo_name}/contents/#{file_path}"
       puts "Status: #{resp.status}"
-      puts resp.body
 
       if (resp.status == 200) || (resp.status == 201) then
         if SiteSetting.log_when_post_uploaded then
