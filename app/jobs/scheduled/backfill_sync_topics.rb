@@ -1,5 +1,5 @@
 module DiscourseStaticPagesSync
-  class BackfillSyncTopicsJob < ::Jobs::Scheduled
+  class BackfillSyncTopics < ::Jobs::Scheduled
     every 24.hours
     
     def execute(args)
