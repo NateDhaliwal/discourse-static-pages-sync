@@ -18,7 +18,7 @@ module ::Jobs
         url: "https://api.github.com",
         headers: {
           "Accept" => "application/vnd.github+json",
-          "Authorization" => SiteSetting.github_access_token,
+          "Authorization" => "Bearer #{SiteSetting.github_access_token}",
           "X-GitHub-Api-Version" => "2022-11-28"
         }
       )
