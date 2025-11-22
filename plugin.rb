@@ -18,7 +18,7 @@ require_relative "lib/discourse_static_pages_sync/engine"
 
 after_initialize do
   %w[
-    ../app/jobs/scheduled/backfill_sync_topics_job.rb
+    ../app/jobs/scheduled/backfill_sync_topics.rb
     ../app/jobs/regular/create_post_and_sync.rb
     ../app/jobs/regular/destroy_post_and_sync.rb
     ../app/models/discourse_static_pages_sync/synced_topics_backfill.rb
