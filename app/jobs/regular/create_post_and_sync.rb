@@ -163,6 +163,8 @@ module ::Jobs
       )
 
       puts "Request sent to /repos/#{repo_user}/#{repo_name}/contents/#{file_path}"
+      puts "Status: #{resp.status}"
+      puts resp.body
 
       if (resp.status == 200) || (resp.status == 201) then
         if SiteSetting.log_when_post_uploaded then
@@ -179,6 +181,7 @@ module ::Jobs
           Jobs.enqueue_in(wait_before_retry, :create_post_and_sync, args)
         end
       else # Other issues
+        puts "Retrying..."
         # Retry job
         Jobs.enqueue_in(60, :create_post_and_sync, args) # Wait 60 seconds
       end
