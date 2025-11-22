@@ -27,13 +27,13 @@ module ::Jobs
       
       category_name = ""
       category_slug = ""
-      if Category.find_by(id: args[:category_id]).name then
+      if post_type == "topic" && Category.find_by(id: args[:category_id]).name then
         category_name = Category.find_by(id: args[:category_id]).name 
       else
        category_name = "Nil"
       end
 
-      if Category.find_by(id: args[:category_id]).slug then
+      if post_type == "topic" && Category.find_by(id: args[:category_id]).slug then
         category_slug = Category.find_by(id: args[:category_id]).slug 
       else
        category_slug = "Nil"
