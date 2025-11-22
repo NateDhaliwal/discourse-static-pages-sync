@@ -27,26 +27,19 @@ module ::Jobs
       
       category_name = ""
       category_slug = ""
-      if post_type == "topic" && Category.find_by(id: args[:category_id]).name then
-        category_name = Category.find_by(id: args[:category_id]).name 
+      if post_type == "topic" && Category.find_by(id: args[:category_id]) then
+        category_name = Category.find_by(id: args[:category_id]).name
+        category_slug = Category.find_by(id: args[:category_id]).slug
       else
        category_name = "Nil"
-      end
-
-      if post_type == "topic" && Category.find_by(id: args[:category_id]).slug then
-        category_slug = Category.find_by(id: args[:category_id]).slug 
-      else
        category_slug = "Nil"
       end
-
+      
       topic_id = args[:topic_id]
       topic_name = "undefined"
-      if Topic.find_by(id: topic_id).title then
-        topic_name = Topic.find_by(id: topic_id).title
-      end
-      
       topic_slug = "undefined"
-      if Topic.find_by(id: topic_id).slug then
+      if Topic.find_by(id: topic_id) then
+        topic_name = Topic.find_by(id: topic_id).title
         topic_slug = Topic.find_by(id: topic_id).slug
       end
 
