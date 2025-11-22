@@ -72,7 +72,7 @@ module ::Jobs
         content = SiteSetting.reply_post_template
       end
 
-      puts content
+      puts cooked
 
       if content.include? "@{post_type}" then
         content = content.sub(
