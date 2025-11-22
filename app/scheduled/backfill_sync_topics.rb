@@ -1,5 +1,8 @@
 module DiscourseStaticPagesSync
-  class BackfillSyncTopicsJob < Jobs::Scheduled
+  class BackfillSyncTopicsJob < ::Jobs::Scheduled
+    every 24.hours
+    
+    def execute(args)
     last_synced = DiscourseStaticPagesSync::SyncedTopicsBackfill.first
 
     # Check if backfill job has been ran before
@@ -95,6 +98,7 @@ module DiscourseStaticPagesSync
 
       # Update last_synced_new
       last_synced_new.update(topic_id: sync_start)
+    end
     end
   end
 end
