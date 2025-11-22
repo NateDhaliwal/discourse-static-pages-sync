@@ -64,50 +64,50 @@ module ::Jobs
         content = SiteSetting.reply_post_template
       end
 
-      if cooked.include?  "@{post_type}" then
-        cooked = cooked.sub(
+      if content.include? "@{post_type}" then
+        content = content.sub(
           "@{post_type}",
           post_type
         )
       end
-      if cooked.include? "@{topic_name}" then
-        cooked = cooked.sub(
+      if content.include? "@{topic_name}" then
+        content = content.sub(
           "@{topic_name}",
           topic_name
         )
       end
-      if cooked.include? "@{topic_id}" then
-        cooked = cooked.sub(
+      if content.include? "@{topic_id}" then
+        content = content.sub(
           "@{topic_id}",
           topic_id.to_i
         )
       end
-      if cooked.include? "@{category_name}" then
-        cooked = cooked.sub(
+      if content.include? "@{category_name}" then
+        content = content.sub(
           "@{category_name}",
           category_name
         )
       end
-      if cooked.include? "@{created_at}" then
-        cooked = cooked.sub(
+      if content.include? "@{created_at}" then
+        content = content.sub(
           "@{created_at}",
           created_at
         )
       end
-      if cooked.include? "@{updated_at}" then
-        cooked = cooked.sub(
+      if content.include? "@{updated_at}" then
+        content = content.sub(
           "@{updated_at}",
           updated_at
         )
       end
-      if cooked.include? "@{whisper}" then
-        cooked = cooked.sub(
+      if content.include? "@{whisper}" then
+        content = content.sub(
           "@{whisper}",
           whisper
         )
       end
-      if cooked.include? "@{post_content}" then
-        cooked = cooked.sub(
+      if content.include? "@{post_content}" then
+        content = content.sub(
           "@{post_content}",
           cooked.to_s
         )
