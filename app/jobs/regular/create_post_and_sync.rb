@@ -23,16 +23,17 @@ module ::Jobs
         }
       )
       
-      username = User.find_by(id: args[:user_id])?.username
+      username = User.find_by(id: args[:user_id]).username
+      
       category_name = ""
-      if post_type == "topic" then
-        category_name = Category.find_by(id: args[:category_id])?.name 
+      if post_type == "topic" && Category.find_by(id: args[:category_id]).name then
+        category_name = Category.find_by(id: args[:category_id]).name 
       else
        category_name = "Nil"
       end
 
       topic_id = args[:topic_id]
-      topic_name = Topic.find_by(id: topic_id)?.title?.sub(" ", "-")
+      topic_name = Topic.find_by(id: topic_id).title.sub(" ", "-")
 
       created_at = args[:created_at]
       updated_at = args[:updated_at]
