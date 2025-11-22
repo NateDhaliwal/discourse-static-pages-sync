@@ -8,7 +8,7 @@ class ::Jobs::BackfillSyncTopics < ::Jobs::Scheduled
 
     # Check if backfill job has been ran before
     if last_synced then
-      if last_synced != 1 then # Not synced to first topic
+      if last_synced.topic_id != 1 then # Not synced to first topic
         last_synced_id = last_synced.topic_id
         sync_start = last_synced_id - SiteSetting.backfill_sync_topics_count
         sync_end = last_synced_id
