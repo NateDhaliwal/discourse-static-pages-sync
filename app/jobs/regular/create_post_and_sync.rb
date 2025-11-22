@@ -40,8 +40,15 @@ module ::Jobs
       end
 
       topic_id = args[:topic_id]
-      topic_name = Topic.find_by(id: topic_id).title
-      topic_slug = Topic.find_by(id: topic_id).slug
+      topic_name = "undefined"
+      if Topic.find_by(id: topic_id).title then
+        topic_name = Topic.find_by(id: topic_id).title
+      end
+      
+      topic_slug = "undefined"
+      if Topic.find_by(id: topic_id).slug then
+        topic_slug = Topic.find_by(id: topic_id).slug
+      end
 
       created_at = args[:created_at]
       updated_at = args[:updated_at]
