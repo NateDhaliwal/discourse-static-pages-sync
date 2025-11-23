@@ -17,6 +17,9 @@ end
 require_relative "lib/discourse_static_pages_sync/engine"
 
 after_initialize do
+  Topic.register_custom_field_type('topic_synced', :boolean)
+  Post.register_custom_field_type('post_synced', :boolean)
+  
   %w[
     ../app/jobs/scheduled/backfill_sync_topics.rb
     ../app/jobs/regular/create_post_and_sync.rb
@@ -25,7 +28,6 @@ after_initialize do
   ].each { |path| require File.expand_path(path, __FILE__) }
   
   on(:topic_created) do |topic|
-    puts topic[:category_id]
     Jobs.enqueue(
       :create_post_and_sync,
       post_type: "topic",
@@ -43,18 +45,20 @@ after_initialize do
   end
 
   on(:post_created) do |post|
-    Jobs.enqueue(
-      :create_post_and_sync,
-      post_type: "post",
-      operation: "create",
-      user_id: post[:user_id],
-      topic_id: post[:topic_id],
-      cooked: post[:cooked],
-      created_at: post[:created_at],
-      updated_at: post[:updated_at],
-      whisper: post[:post_type] == 4,
-      post_number: post[:post_number]
-    )
+    if post[:post_number].to_i != 1 then # Exclude topic posts
+      Jobs.enqueue(
+        :create_post_and_sync,
+        post_type: "post",
+        operation: "create",
+        user_id: post[:user_id],
+        topic_id: post[:topic_id],
+        cooked: post[:cooked],
+        created_at: post[:created_at],
+        updated_at: post[:updated_at],
+        whisper: post[:post_type] == 4,
+        post_number: post[:post_number]
+      )
+    end
   end
 
   # This will be for topics and posts
