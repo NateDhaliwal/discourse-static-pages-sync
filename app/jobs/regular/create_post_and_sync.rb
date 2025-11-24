@@ -15,6 +15,7 @@ module ::Jobs
       repo_name = target_repo.split("https://github.com/")[1].split("/")[1]
 
       if !(args[:category_id].includes? SiteSetting.allowed_categories) && !SiteSetting.allowed_categories.empty? then
+        puts "Exiting"
         return
       end
 
