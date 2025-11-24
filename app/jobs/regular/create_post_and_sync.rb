@@ -89,7 +89,7 @@ module ::Jobs
       if content.include? "@{topic_name}" then
         content = content.sub(
           "@{topic_name}",
-          topic_name
+          '"' + topic_name.to_s + '"'
         )
       end
       if content.include? "@{topic_id}" then
