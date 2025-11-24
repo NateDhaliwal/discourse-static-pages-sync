@@ -58,6 +58,7 @@ class ::Jobs::BackfillSyncTopics < ::Jobs::Scheduled
         last_synced.update!(topic_id: sync_start)
       end
     else
+      puts "Create new"
       # Create last_synced
       last_synced_new = DiscourseStaticPagesSync::SyncedTopicsBackfill.create!(topic_id: Topic.last.id) # Most recent topic
 
@@ -65,6 +66,10 @@ class ::Jobs::BackfillSyncTopics < ::Jobs::Scheduled
       # Start the backfill
       sync_start = last_synced_id - SiteSetting.backfill_sync_topics_count <= 1 ? 1 : last_synced_id - SiteSetting.backfill_sync_topics_count
       sync_end = last_synced_id
+
+      puts last_synced_id
+      puts sync_start
+      puts sync_end
 
       topics_to_sync = Topic.where("id > ? AND id < ?", sync_start, sync_end)
 
