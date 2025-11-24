@@ -24,7 +24,7 @@ class ::Jobs::BackfillSyncTopics < ::Jobs::Scheduled
             topic_id: topic[:id],
             user_id: topic[:user_id],
             category_id: topic[:category_id],
-            cooked: topic[:cooked],
+            cooked: topic[:ordered_posts][0][:cooked],
             created_at: topic[:created_at],
             updated_at: topic[:updated_at],
             whisper: topic[:post_type] == 4,
