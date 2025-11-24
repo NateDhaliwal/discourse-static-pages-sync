@@ -16,20 +16,22 @@ class ::Jobs::BackfillSyncTopics < ::Jobs::Scheduled
         topics_to_sync = Topic.where("id > ? AND id < ?", sync_start, sync_end)
 
         topics_to_sync.each do |topic|
-          Jobs.enqueue(
-            :create_post_and_sync,
-            post_type: "topic",
-            operation: "create",
-            title: topic[:title],
-            topic_id: topic[:id],
-            user_id: topic[:user_id],
-            category_id: topic[:category_id],
-            cooked: topic[:cooked],
-            created_at: topic[:created_at],
-            updated_at: topic[:updated_at],
-            whisper: topic[:post_type] == 4,
-            post_number: topic[:post_number]
-          )
+          if topic.archetype == "regular" then # Exclude PMs
+            Jobs.enqueue(
+              :create_post_and_sync,
+              post_type: "topic",
+              operation: "create",
+              title: topic[:title],
+              topic_id: topic[:id],
+              user_id: topic[:user_id],
+              category_id: topic[:category_id],
+              cooked: topic[:cooked],
+              created_at: topic[:created_at],
+              updated_at: topic[:updated_at],
+              whisper: topic[:post_type] == 4,
+              post_number: topic[:post_number]
+            )
+          end
 
           topic.ordered_posts.each do |post|
             if post.post_number > 1 then
