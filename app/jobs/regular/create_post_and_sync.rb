@@ -36,6 +36,12 @@ module ::Jobs
       end
       
       topic_id = args[:topic_id]
+
+      # Exclude PMs
+      if Topic.find_by(id: topic_id).archetype == "private_message" then
+        return
+      end
+      
       topic_name = "undefined"
       topic_slug = "undefined"
       if Topic.find_by(id: topic_id) then
