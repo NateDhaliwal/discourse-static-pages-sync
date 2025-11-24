@@ -19,6 +19,9 @@ require_relative "lib/discourse_static_pages_sync/engine"
 after_initialize do
   Topic.register_custom_field_type('topic_synced', :boolean)
   Post.register_custom_field_type('post_synced', :boolean)
+
+  register_topic_custom_field_type('topic_synced', :boolean)
+  register_post_custom_field_type('post_synced', :boolean)
   
   %w[
     ../app/jobs/scheduled/backfill_sync_topics.rb
