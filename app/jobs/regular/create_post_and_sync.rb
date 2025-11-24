@@ -14,6 +14,10 @@ module ::Jobs
       repo_user = target_repo.split("https://github.com/")[1].split("/")[0]
       repo_name = target_repo.split("https://github.com/")[1].split("/")[1]
 
+      if args[:category_id] not in SiteSetting.allowed_categories then
+        return
+      end
+
       conn = Faraday.new(
         url: "https://api.github.com",
         headers: {
