@@ -44,6 +44,7 @@ module ::Jobs
 
       # Exclude PMs
       if Topic.find_by(id: topic_id).archetype == "private_message" then
+        puts "PM, exiting"
         return
       end
       
