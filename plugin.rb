@@ -31,26 +31,24 @@ after_initialize do
   ].each { |path| require File.expand_path(path, __FILE__) }
   
   on(:topic_created) do |topic|
-    if topic.archetype == "regular" then # Exclude PMs
-      Jobs.enqueue(
-        :create_post_and_sync,
-        post_type: "topic",
-        operation: "create",
-        title: topic[:title],
-        topic_id: topic[:id],
-        user_id: topic[:user_id],
-        category_id: topic[:category_id],
-        cooked: topic[:cooked],
-        created_at: topic[:created_at],
-        updated_at: topic[:updated_at],
-        whisper: topic[:post_type] == 4,
-        post_number: topic[:post_number]
-      )
-    end
+    Jobs.enqueue(
+      :create_post_and_sync,
+      post_type: "topic",
+      operation: "create",
+      title: topic[:title],
+      topic_id: topic[:id],
+      user_id: topic[:user_id],
+      category_id: topic[:category_id],
+      cooked: topic[:cooked],
+      created_at: topic[:created_at],
+      updated_at: topic[:updated_at],
+      whisper: topic[:post_type] == 4,
+      post_number: topic[:post_number]
+    )
   end
 
   on(:post_created) do |post|
-    if post[:post_number].to_i != 1 then # Exclude topic posts
+    if post[:post_number].to_i != 1 then # Exclude topic posts and private messages
       Jobs.enqueue(
         :create_post_and_sync,
         post_type: "post",
@@ -84,21 +82,19 @@ after_initialize do
   end
 
   on(:topic_destroyed) do |topic|
-    if topic.archetype == "regular" then # Exclude PMs
-      Jobs.enqueue(
-        :destroy_post_and_sync,
-        post_type: "topic",
-        title: topic[:title],
-        topic_id: topic[:id],
-        user_id: topic[:user_id],
-        category_id: topic[:category_id],
-        cooked: topic[:cooked],
-        created_at: topic[:created_at],
-        updated_at: topic[:updated_at],
-        whisper: topic[:post_type] == 4,
-        post_number: topic[:post_number]
-      )
-    end
+    Jobs.enqueue(
+      :destroy_post_and_sync,
+      post_type: "topic",
+      title: topic[:title],
+      topic_id: topic[:id],
+      user_id: topic[:user_id],
+      category_id: topic[:category_id],
+      cooked: topic[:cooked],
+      created_at: topic[:created_at],
+      updated_at: topic[:updated_at],
+      whisper: topic[:post_type] == 4,
+      post_number: topic[:post_number]
+    )
   end
 
   on(:post_destroyed) do |post|
