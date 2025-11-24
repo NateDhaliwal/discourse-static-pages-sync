@@ -50,11 +50,11 @@ class ::Jobs::BackfillSyncTopics < ::Jobs::Scheduled
         end
 
         # Update last_synced
-        last_synced.update(topic_id: sync_start)
+        last_synced.update!(topic_id: sync_start)
       end
     else
       # Create last_synced
-      last_synced_new = DiscourseStaticPagesSync::SyncedTopicsBackfill.create(topic_id: Topic.last.id) # Most recent topic
+      last_synced_new = DiscourseStaticPagesSync::SyncedTopicsBackfill.create!(topic_id: Topic.last.id) # Most recent topic
 
       last_synced_id = last_synced_new.topic_id
       # Start the backfill
@@ -97,7 +97,7 @@ class ::Jobs::BackfillSyncTopics < ::Jobs::Scheduled
         end
       end
       # Update last_synced_new
-      last_synced_new.update(topic_id: sync_start)
+      last_synced_new.update!(topic_id: sync_start)
     end
   end
 end
