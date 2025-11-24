@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
 class ::Jobs::BackfillSyncTopics < ::Jobs::Scheduled
-  every 24.hours
+  every 10.seconds
     
   def execute(args)
+    puts "Running"
     last_synced = DiscourseStaticPagesSync::SyncedTopicsBackfill.first
 
     # Check if backfill job has been ran before
