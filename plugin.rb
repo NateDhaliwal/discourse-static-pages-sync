@@ -98,6 +98,7 @@ after_initialize do
         whisper: topic[:post_type] == 4,
         post_number: topic[:post_number]
       )
+    end
   end
 
   on(:post_destroyed) do |post|
