@@ -78,4 +78,5 @@ discourse_static_pages_sync:
 
   allowed_categories:
     default: ""
-    type: category
+    type: list
+    list_type: category
