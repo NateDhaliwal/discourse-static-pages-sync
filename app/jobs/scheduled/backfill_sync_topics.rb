@@ -21,6 +21,7 @@ class ::Jobs::BackfillSyncTopics < ::Jobs::Scheduled
         topics_to_sync = Topic.where("id > ? AND id < ?", sync_start, sync_end)
 
         topics_to_sync.each do |topic|
+          puts "Queuing #{topic[:title].to_s}"
           Jobs.enqueue(
             :create_post_and_sync,
             post_type: "topic",
@@ -74,6 +75,7 @@ class ::Jobs::BackfillSyncTopics < ::Jobs::Scheduled
       topics_to_sync = Topic.where("id > ? AND id < ?", sync_start, sync_end)
 
       topics_to_sync.each do |topic|
+        puts "Queuing #{topic[:title].to_s}"
         Jobs.enqueue(
           :create_post_and_sync,
           post_type: "topic",
