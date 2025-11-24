@@ -75,3 +75,7 @@ discourse_static_pages_sync:
   reply_post_path:
     default: "/@{topic_slug}/@{post_number}.md"
     type: string
+
+  allowed_categories:
+    default: ""
+    type: category
