@@ -81,6 +81,6 @@ discourse_static_pages_sync:
     default: "/@{topic_slug}/@{post_number}.md"
     type: string
 
-  allowed_categories:
+  disallowed_categories:
     default: 3
     type: category_list
