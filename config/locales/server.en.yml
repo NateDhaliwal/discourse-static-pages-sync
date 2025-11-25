@@ -7,5 +7,7 @@ en:
     delete_post_file_when_post_deleted: "Delete the related post/topic file(s) when a post/topic is deleted"
     log_when_post_synced: "Log when a topic or post is uploaded to Github"
     backfill_sync_topics_count: "How many topics to sync each time when running the backfill"
+    backfill_sync_topics_frequency: "How many hours between each backfill job"
     topic_post_template: "The file template for topic files"
     reply_post_template: "The file template for post (reply) files"
+    disallowed_categories: "Categories to exclude when syncing and running the backfill job"
