@@ -18,10 +18,22 @@ require_relative "lib/discourse_static_pages_sync/engine"
 
 after_initialize do
   Topic.register_custom_field_type('topic_synced', :boolean)
-  Post.register_custom_field_type('post_synced', :boolean)
+  # Post.register_custom_field_type('post_synced', :boolean)
 
   register_topic_custom_field_type('topic_synced', :boolean)
-  register_post_custom_field_type('post_synced', :boolean)
+  # register_post_custom_field_type('post_synced', :boolean)
+
+  add_to_class(:topic, :boolean) do
+    if !custom_fields['topic_synced'].nil?
+      custom_fields['topic_synced']
+    else
+      nil
+    end
+  end
+
+  add_to_class(:topic, "topic_synced=") do |value|
+    custom_fields['topic_synced'] = value
+  end
   
   %w[
     ../app/jobs/scheduled/backfill_sync_topics.rb
@@ -31,6 +43,12 @@ after_initialize do
   ].each { |path| require File.expand_path(path, __FILE__) }
   
   on(:topic_created) do |topic|
+    topic.send(
+      "topic_synced=".to_sym,
+      :boolean,
+    )
+    topic.save!
+    
     Jobs.enqueue(
       :create_post_and_sync,
       post_type: "topic",
