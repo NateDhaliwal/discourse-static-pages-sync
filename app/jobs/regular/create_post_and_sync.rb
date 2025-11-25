@@ -138,18 +138,19 @@ module ::Jobs
         file_path = file_path.sub("@{topic_slug}", topic_slug)
       end
 
-      sha = ""
+      sha = nil
       if operation == "update" then
-        passed = false
-        resp = ""
-        while !passed do
-          resp = conn.get("/repos/#{repo_user}/#{repo_name}/contents/#{file_path}")
-          if resp.status == 200 then
-            passed = true
-            break
+        resp = conn.get("/repos/#{repo_user}/#{repo_name}/contents/#{file_path}")
+        if resp.status == 200 then          
+          body = JSON.parse(resp.body)
+          if body["sha"] then
+            sha = body["sha"]
+          else
+            operation = "create"
           end
+        else
+          operation = "create"
         end
-        sha = resp.body[:sha]
       end
 
       req_body = {}
