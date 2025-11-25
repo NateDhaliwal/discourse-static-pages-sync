@@ -8,6 +8,7 @@ class ::Jobs::BackfillSyncTopics < ::Jobs::Scheduled
     last_synced = DiscourseStaticPagesSync::SyncedTopicsBackfill.first
 
     if last_synced && last_synced.topic_id == 1 then
+      puts "Topic id 1, exiting"
       return
     end
 
