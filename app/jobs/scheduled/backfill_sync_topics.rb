@@ -7,6 +7,8 @@ class ::Jobs::BackfillSyncTopics < ::Jobs::Scheduled
     puts "Running"
     last_synced = DiscourseStaticPagesSync::SyncedTopicsBackfill.first
 
+    return if last_synced&.topic_id == 1
+
     # Check if backfill job has been ran before
     if last_synced then
       if last_synced.topic_id != 1 then # Not synced to first topic
@@ -18,7 +20,7 @@ class ::Jobs::BackfillSyncTopics < ::Jobs::Scheduled
         puts sync_start
         puts sync_end
 
-        topics_to_sync = Topic.where("id > ? AND id < ?", sync_start, sync_end)
+        topics_to_sync = Topic.where("id >= ? AND id <= ?", sync_start, sync_end)
 
         topics_to_sync.each do |topic|
           puts "Queuing #{topic[:title].to_s}"
