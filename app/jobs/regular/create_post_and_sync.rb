@@ -64,20 +64,6 @@ module ::Jobs
       cooked = args[:cooked]
       content = ""
 
-      sha = ""
-      if operation == "update" then
-        passed = false
-        resp = ""
-        while !passed do
-          resp = conn.get("/repos/#{repo_user}/#{repo_name}/contents/#{file_path}")
-          if resp.status == 200 then
-            passed = true
-            break
-          end
-        end
-        sha = resp.body[:sha]
-      end
-
       if post_type == "topic" then
         content = SiteSetting.topic_post_template
       else
@@ -150,6 +136,20 @@ module ::Jobs
 
       if file_path.include? "@{topic_slug}" then
         file_path = file_path.sub("@{topic_slug}", topic_slug)
+      end
+
+      sha = ""
+      if operation == "update" then
+        passed = false
+        resp = ""
+        while !passed do
+          resp = conn.get("/repos/#{repo_user}/#{repo_name}/contents/#{file_path}")
+          if resp.status == 200 then
+            passed = true
+            break
+          end
+        end
+        sha = resp.body[:sha]
       end
 
       req_body = {}
