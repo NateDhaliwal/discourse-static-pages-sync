@@ -14,7 +14,7 @@ module ::Jobs
       repo_user = target_repo.split("https://github.com/")[1].split("/")[0]
       repo_name = target_repo.split("https://github.com/")[1].split("/")[1]
 
-      if !(args[:category_id].includes? SiteSetting.allowed_categories) && !SiteSetting.allowed_categories.empty? then
+      if !(SiteSetting.allowed_categories.includes? args[:category_id]) && !SiteSetting.allowed_categories.empty? then
         puts "Exiting"
         return
       end
