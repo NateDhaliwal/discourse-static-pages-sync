@@ -43,7 +43,7 @@ class ::Jobs::BackfillSyncTopics < ::Jobs::Scheduled
           )
 
           topic.ordered_posts.each do |post|
-            if post.post_number > 1 then
+            if post.post_number > 1 && (post_type == 1 || post_type == 2) then
               Jobs.enqueue(
                 :create_post_and_sync,
                 post_type: "post",
@@ -97,7 +97,7 @@ class ::Jobs::BackfillSyncTopics < ::Jobs::Scheduled
         )
 
         topic.ordered_posts.each do |post|
-          if post.post_number > 1 then
+          if post.post_number > 1 && (post_type == 1 || post_type == 2) then
             Jobs.enqueue(
               :create_post_and_sync,
               post_type: "post",
