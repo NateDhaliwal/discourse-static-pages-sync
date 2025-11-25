@@ -50,20 +50,20 @@ after_initialize do
       :boolean,
     )
     topic.save!
-    
+
     Jobs.enqueue(
       :create_post_and_sync,
       post_type: "topic",
       operation: "create",
-      title: topic[:title],
-      topic_id: topic[:id],
-      user_id: topic[:user_id],
-      category_id: topic[:category_id],
-      cooked: topic.ordered_posts[0].cooked,
-      created_at: topic[:created_at],
-      updated_at: topic[:updated_at],
+      title: topic[:title].to_s,
+      topic_id: topic[:id].to_i,
+      user_id: topic[:user_id].to_i,
+      category_id: topic[:category_id].to_i,
+      cooked: topic.ordered_posts[0].cooked.to_s,
+      created_at: topic[:created_at].to_s,
+      updated_at: topic[:updated_at].to_s,
       whisper: topic[:post_type] == 4,
-      post_number: topic[:post_number]
+      post_number: topic[:post_number].to_i
     )
   end
 
