@@ -36,6 +36,11 @@ discourse_static_pages_sync:
     type: integer
     min: 1
 
+  backfill_sync_topics_frequency:
+    default: 24.0
+    type: float
+    min: 0.0
+
   topic_post_template:
     default: |
       ---
