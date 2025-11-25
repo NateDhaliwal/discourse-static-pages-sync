@@ -4,17 +4,14 @@ class ::Jobs::BackfillSyncTopics < ::Jobs::Scheduled
   every 10.seconds
     
   def execute(args)
-    puts "Running"
     last_synced = DiscourseStaticPagesSync::SyncedTopicsBackfill.first
 
     if last_synced && last_synced.topic_id == 1 then
-      puts "Topic id 1, exiting"
       return
     end
 
     # Check if backfill job has been ran before
     if !last_synced then
-      puts "Create new"
       # Create last_synced
       last_synced = DiscourseStaticPagesSync::SyncedTopicsBackfill.create!(topic_id: Topic.last.id) # Most recent topic
     end
@@ -23,15 +20,10 @@ class ::Jobs::BackfillSyncTopics < ::Jobs::Scheduled
     if last_synced.topic_id != 1 then # Not synced to first topic
       sync_start = last_synced_id - SiteSetting.backfill_sync_topics_count <= 1 ? 1 : last_synced_id - SiteSetting.backfill_sync_topics_count
       sync_end = last_synced_id
-
-      puts last_synced_id
-      puts sync_start
-      puts sync_end
-
+      
       topics_to_sync = Topic.where("id >= ? AND id <= ?", sync_start, sync_end)
 
       topics_to_sync.each do |topic|
-        puts "Queuing #{topic[:title]}"
         Jobs.enqueue(
           :create_post_and_sync,
           post_type: "topic",
@@ -70,7 +62,6 @@ class ::Jobs::BackfillSyncTopics < ::Jobs::Scheduled
       last_synced.update!(topic_id: sync_start)
     end
     # else
-    #   puts "Create new"
     #   # Create last_synced
     #   last_synced_new = DiscourseStaticPagesSync::SyncedTopicsBackfill.create!(topic_id: Topic.last.id) # Most recent topic
 
@@ -79,14 +70,9 @@ class ::Jobs::BackfillSyncTopics < ::Jobs::Scheduled
     #   sync_start = last_synced_id - SiteSetting.backfill_sync_topics_count <= 1 ? 1 : last_synced_id - SiteSetting.backfill_sync_topics_count
     #   sync_end = last_synced_id
 
-    #   puts last_synced_id
-    #   puts sync_start
-    #   puts sync_end
-
     #   topics_to_sync = Topic.where("id > ? AND id < ?", sync_start, sync_end)
 
     #   topics_to_sync.each do |topic|
-    #     puts "Queuing #{topic[:title]}"
     #     Jobs.enqueue(
     #       :create_post_and_sync,
     #       post_type: "topic",
