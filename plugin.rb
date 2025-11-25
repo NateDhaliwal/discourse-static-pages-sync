@@ -48,7 +48,8 @@ after_initialize do
   end
 
   on(:post_created) do |post|
-    if post[:post_number].to_i != 1 then # Exclude topic posts and private messages
+    post_type = post[:post_type]
+    if post.post_number > 1 && (post_type == 1 || post_type == 2) then # Exclude topic posts and private messages 
       Jobs.enqueue(
         :create_post_and_sync,
         post_type: "post",
@@ -67,18 +68,21 @@ after_initialize do
   # This will be for topics and posts
   # We will check if the post_number is 1, if it is, it is the OP
   on(:post_edited) do |post|
-    Jobs.enqueue(
-      :create_post_and_sync,
-      post_type: post[:post_number] == 1 ? "topic" : "post",
-      operation: "update",
-      user_id: post[:user_id],
-      topic_id: post[:post_number] == 1 ? post[:id] : post[:topic_id],
-      cooked: post[:cooked],
-      created_at: post[:created_at],
-      updated_at: post[:updated_at],
-      whisper: post[:post_type] == 4,
-      post_number: post[:post_number]
-    )
+    post_type = post[:post_type]
+    if post_type == 1 || post_type == 2 then # Exclude topic posts and private messages 
+      Jobs.enqueue(
+        :create_post_and_sync,
+        post_type: post[:post_number] == 1 ? "topic" : "post",
+        operation: "update",
+        user_id: post[:user_id],
+        topic_id: post[:post_number] == 1 ? post[:id] : post[:topic_id],
+        cooked: post[:cooked],
+        created_at: post[:created_at],
+        updated_at: post[:updated_at],
+        whisper: post[:post_type] == 4,
+        post_number: post[:post_number]
+      )
+    end
   end
 
   on(:topic_destroyed) do |topic|
