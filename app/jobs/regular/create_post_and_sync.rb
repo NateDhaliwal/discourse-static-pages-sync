@@ -15,7 +15,6 @@ module ::Jobs
       repo_name = target_repo.split("https://github.com/")[1].split("/")[1]
 
       if (SiteSetting.allowed_categories.split("|").include? args[:category_id].to_s) && (!SiteSetting.allowed_categories.empty?) then
-        puts "Exiting"
         return
       end
 
@@ -44,7 +43,6 @@ module ::Jobs
 
       # Exclude PMs
       if Topic.find_by(id: topic_id).archetype == "private_message" then
-        puts "PM, exiting"
         return
       end
       
@@ -187,9 +185,6 @@ module ::Jobs
         json_req_body
       )
 
-      puts "Request sent to /repos/#{repo_user}/#{repo_name}/contents/#{file_path}"
-      puts "Status: #{resp.status}"
-
       if (resp.status == 200) || (resp.status == 201) then
         if SiteSetting.log_when_post_uploaded then
           Rails.logger.info "Topic '#{topic_name}' has been #{operation == "create" ? "uploaded" : "updated"}"
@@ -205,7 +200,6 @@ module ::Jobs
           Jobs.enqueue_in(wait_before_retry, :create_post_and_sync, args)
         end
       else # Other issues
-        puts "Retrying..."
         # Retry job
         Jobs.enqueue_in(60, :create_post_and_sync, args) # Wait 60 seconds
       end
