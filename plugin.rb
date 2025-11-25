@@ -35,10 +35,6 @@ after_initialize do
     custom_fields['topic_synced'] = value
   end
 
-  add_to_serializer(:topic_view, 'topic_synced'.to_sym) do
-    object.topic.send('topic_synced')
-  end
-
   add_preloaded_topic_list_custom_field('topic_synced')
   
   %w[
