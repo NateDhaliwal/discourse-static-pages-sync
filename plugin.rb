@@ -34,6 +34,12 @@ after_initialize do
   add_to_class(:topic, "topic_synced=") do |value|
     custom_fields['topic_synced'] = value
   end
+
+  add_to_serializer(:topic_view, 'topic_synced'.to_sym) do
+    object.topic.send('topic_synced')
+  end
+
+  add_preloaded_topic_list_custom_field('topic_synced')
   
   %w[
     ../app/jobs/scheduled/backfill_sync_topics.rb
