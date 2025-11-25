@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ::Jobs::BackfillSyncTopics < ::Jobs::Scheduled
-  every 10.seconds
+  every (SiteSetting.backfill_sync_topics_frequency).hours
     
   def execute(args)
     last_synced = DiscourseStaticPagesSync::SyncedTopicsBackfill.first
