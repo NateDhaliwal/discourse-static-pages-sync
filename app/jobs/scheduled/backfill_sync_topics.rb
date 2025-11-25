@@ -16,13 +16,10 @@ class ::Jobs::BackfillSyncTopics < ::Jobs::Scheduled
     if !last_synced then
       puts "Create new"
       # Create last_synced
-      last_synced_new = DiscourseStaticPagesSync::SyncedTopicsBackfill.create!(topic_id: Topic.last.id) # Most recent topic
-
-      last_synced_id = last_synced_new.topic_id
-    else
-      last_synced_id = last_synced.topic_id
+      last_synced = DiscourseStaticPagesSync::SyncedTopicsBackfill.create!(topic_id: Topic.last.id) # Most recent topic
     end
-    
+
+    last_synced_id = last_synced.topic_id
     if last_synced.topic_id != 1 then # Not synced to first topic
       sync_start = last_synced_id - SiteSetting.backfill_sync_topics_count <= 1 ? 1 : last_synced_id - SiteSetting.backfill_sync_topics_count
       sync_end = last_synced_id
