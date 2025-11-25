@@ -7,7 +7,9 @@ class ::Jobs::BackfillSyncTopics < ::Jobs::Scheduled
     puts "Running"
     last_synced = DiscourseStaticPagesSync::SyncedTopicsBackfill.first
 
-    return if last_synced&.topic_id == 1
+    if last_synced && last_synced.topic_id == 1 then
+      return
+    end
 
     # Check if backfill job has been ran before
     if last_synced then
