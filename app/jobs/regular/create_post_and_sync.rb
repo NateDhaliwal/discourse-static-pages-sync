@@ -70,8 +70,6 @@ module ::Jobs
         content = SiteSetting.reply_post_template
       end
 
-      puts cooked
-
       if content.include? "@{post_type}" then
         content = content.sub(
           "@{post_type}",
@@ -138,6 +136,13 @@ module ::Jobs
         file_path = file_path.sub("@{topic_slug}", topic_slug)
       end
 
+      # Check if file exists
+      existing = conn.get("/repos/#{repo_user}/#{repo_name}/contents/#{file_path}")
+
+      if existing.status == 200 then
+        operation = "update"
+      end
+
       sha = nil
       if operation == "update" then
         resp = conn.get("/repos/#{repo_user}/#{repo_name}/contents/#{file_path}")
@@ -171,6 +176,7 @@ module ::Jobs
             "email": SiteSetting.github_committer_email
           },
           sha: sha,
+          content: content_encoded,
         }
       end
 
