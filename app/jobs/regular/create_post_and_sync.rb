@@ -14,6 +14,8 @@ module ::Jobs
       repo_user = target_repo.split("https://github.com/")[1].split("/")[0]
       repo_name = target_repo.split("https://github.com/")[1].split("/")[1]
 
+      puts SiteSetting.disallowed_categories
+
       if (SiteSetting.disallowed_categories.split("|").include? args[:category_id].to_s) && (!SiteSetting.disallowed_categories.empty?) then
         return
       end
