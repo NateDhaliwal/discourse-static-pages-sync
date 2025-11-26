@@ -89,6 +89,8 @@ after_initialize do
   # We will check if the post_number is 1, if it is, it is the OP
   on(:post_edited) do |post|
     post_type = post[:post_type]
+    puts post[:post_number] == 1 ? "topic" : "post"
+    puts post[:topic_id].to_i
     if post_type == 1 || post_type == 2 then # Exclude topic posts and private messages 
       Jobs.enqueue(
         :create_post_and_sync,
