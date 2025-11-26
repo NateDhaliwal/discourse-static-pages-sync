@@ -47,7 +47,7 @@ after_initialize do
   on(:topic_created) do |topic|
     topic.send(
       "topic_synced=".to_sym,
-      :boolean,
+      false,
     )
     topic.save!
 
