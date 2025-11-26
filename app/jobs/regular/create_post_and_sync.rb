@@ -35,7 +35,7 @@ module ::Jobs
 
       # For edited topic posts
       if !args[:category_id] then
-        puts Topic.find_by(id: topic_id).title
+        puts Topic.find_by(id: topic_id).category_id
         topic_category_id = Topic.find_by(id: topic_id).category_id.to_i
         category_name = Category.find_by(id: topic_category_id).name
         category_slug = Category.find_by(id: topic_category_id).slug
