@@ -63,7 +63,8 @@ after_initialize do
       created_at: topic[:created_at].to_s,
       updated_at: topic[:updated_at].to_s,
       whisper: topic[:post_type] == 4,
-      post_number: topic[:post_number].to_i
+      post_number: 1,
+      post_id: topic.ordered_posts[0].id.to_i
     )
   end
 
@@ -81,6 +82,7 @@ after_initialize do
         updated_at: post[:updated_at].to_s,
         whisper: post[:post_type] == 4,
         post_number: post[:post_number].to_i
+        post_id: post[:id].to_i
       )
     end
   end
@@ -110,29 +112,24 @@ after_initialize do
     Jobs.enqueue(
       :destroy_post_and_sync,
       post_type: "topic",
-      operation: "create",
-      user_id: post[:user_id].to_i,
-      topic_id: post[:topic_id].to_i,
-      cooked: post[:cooked].to_s,
-      created_at: post[:created_at].to_s,
-      updated_at: post[:updated_at].to_s,
-      whisper: post[:post_type] == 4,
-      post_number: post[:post_number].to_i
+      operation: "delete_topic",
+      topic_slug: topic.slug,
+      category_id: topic.category_id,
+      topic_id: topic[:id].to_i,
+      post_number: 1,
+      post_id: topic.ordered_posts[0].id.to_i
     )
   end
 
   on(:post_destroyed) do |post|
+    if (post_type == 1 || post_type == 2) && (post[:post_number] > 1) then
     Jobs.enqueue(
       :destroy_post_and_sync,
       post_type: "post",
-      operation: "create",
-      user_id: post[:user_id].to_i,
+      operation: "delete_post",
       topic_id: post[:topic_id].to_i,
-      cooked: post[:cooked].to_s,
-      created_at: post[:created_at].to_s,
-      updated_at: post[:updated_at].to_s,
-      whisper: post[:post_type] == 4,
-      post_number: post[:post_number].to_i
+      post_number: post[:post_number].to_i,
+      post_id: post[:id].to_i
     )
   end
 end
