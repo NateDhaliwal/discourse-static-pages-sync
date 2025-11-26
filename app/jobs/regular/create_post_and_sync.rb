@@ -28,18 +28,25 @@ module ::Jobs
       )
       
       username = User.find_by(id: args[:user_id]).username
+      topic_id = args[:topic_id]
       
       category_name = ""
       category_slug = ""
-      if post_type == "topic" && Category.find_by(id: args[:category_id]) then
-        category_name = Category.find_by(id: args[:category_id]).name
-        category_slug = Category.find_by(id: args[:category_id]).slug
+
+      # For edited topic posts
+      if !args[:category_id] then
+        topic_category_id = Topic.find_by(id: topic_id).category_id.to_i
+        category_name = Category.find_by(id: topic_category_id).name
+        category_slug = Category.find_by(id: topic_category_id).slug
       else
-       category_name = "Nil"
-       category_slug = "Nil"
+        if post_type == "topic" && Category.find_by(id: args[:category_id]) then
+          category_name = Category.find_by(id: args[:category_id]).name
+          category_slug = Category.find_by(id: args[:category_id]).slug
+        else
+         category_name = "Nil"
+         category_slug = "Nil"
+        end
       end
-      
-      topic_id = args[:topic_id]
 
       # Exclude PMs
       if Topic.find_by(id: topic_id).archetype == "private_message" then
