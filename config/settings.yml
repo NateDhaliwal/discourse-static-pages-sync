@@ -7,6 +7,10 @@ discourse_static_pages_sync:
     default: "Sync topic with forum"
     type: string
 
+  delete_commit_message:
+    default: "Delete topic"
+    type: string
+
   github_committer_username:
     default: ""
     type: string
