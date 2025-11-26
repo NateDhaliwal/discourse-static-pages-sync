@@ -35,7 +35,6 @@ module ::Jobs
 
       # For edited topic posts
       if !args[:category_id] then
-        puts Topic.find_by(id: topic_id).category_id
         topic_category_id = Topic.find_by(id: topic_id).category_id.to_i
         category_name = Category.find_by(id: topic_category_id).name
         category_slug = Category.find_by(id: topic_category_id).slug
@@ -147,6 +146,14 @@ module ::Jobs
 
       if existing.status == 200 then
         operation = "update"
+      end
+
+      if operation == "update" then
+        Jobs.enqueue(
+          :destroy_post_and_sync
+          post_type: post_type
+          post_id: post_id
+        )
       end
 
       sha = nil
