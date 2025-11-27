@@ -131,5 +131,6 @@ after_initialize do
         post_number: post[:post_number].to_i,
         post_id: post[:id].to_i
       )
+    end
   end
 end
