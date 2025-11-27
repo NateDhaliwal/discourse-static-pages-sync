@@ -64,6 +64,7 @@ module ::Jobs
       updated_at = args[:updated_at]
 
       post_number = args[:post_number]
+      post_id = args[:post_id]
       whisper = args[:whisper]
       
       cooked = args[:cooked]
