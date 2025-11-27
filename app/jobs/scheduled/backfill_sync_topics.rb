@@ -38,7 +38,7 @@ class ::Jobs::BackfillSyncTopics < ::Jobs::Scheduled
           updated_at: topic[:updated_at].to_s,
           whisper: topic[:post_type] == 4,
           post_number: topic[:post_number].to_i,
-          post_id: post_id: topic.ordered_posts[0].id.to_i
+          post_id: topic.ordered_posts[0].id.to_i
         )
 
         topic.ordered_posts.each do |post|
