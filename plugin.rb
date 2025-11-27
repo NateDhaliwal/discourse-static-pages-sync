@@ -81,7 +81,7 @@ after_initialize do
         created_at: post[:created_at].to_s,
         updated_at: post[:updated_at].to_s,
         whisper: post[:post_type] == 4,
-        post_number: post[:post_number].to_i
+        post_number: post[:post_number].to_i,
         post_id: post[:id].to_i
       )
     end
