@@ -27,6 +27,52 @@ module ::Jobs
 
       return sha
     end
+
+    def delete_file(file_path)
+      target_repo = SiteSetting.target_github_repo
+      repo_user = target_repo.split("https://github.com/")[1].split("/")[0]
+      repo_name = target_repo.split("https://github.com/")[1].split("/")[1]
+
+      conn = Faraday.new(
+        url: "https://api.github.com",
+        headers: {
+          "Accept" => "application/vnd.github+json",
+          "Authorization" => "Bearer #{SiteSetting.github_access_token}",
+          "X-GitHub-Api-Version" => "2022-11-28"
+        }
+      )
+      
+      req_body = {
+        message: SiteSetting.delete_commit_message,
+        committer: {
+          "name": SiteSetting.github_committer_username,
+          "email": SiteSetting.github_committer_email
+        },
+        sha: get_sha(file_path)
+      }
+
+      json_req_body = JSON.generate(req_body)
+      resp = conn.delete("/repos/#{repo_user}/#{repo_name}/contents/#{file_path}", json_req_body)
+
+      if resp.status == 200 then
+        if SiteSetting.log_when_post_uploaded then
+          Rails.logger.info "Topic '#{topic_name}' has been deleted"
+        end
+      elsif resp.status == 422 then # Job failed
+        Rails.logger.error "An error occurred when trying to delete '#{topic_name}': #{resp.body}"
+        if resp.headers["x-ratelimit-remaining"].to_i == 0 then # Rate limit reached
+          time_reset = Time.at(resp.headers["x-ratelimit-remaining"].to_i)
+          time_now = Time.now()
+          time_until_reset = time_reset - time_now # In seconds
+          wait_before_retry_min = 60 # 60 seconds
+          wait_before_retry = [time_until_reset, wait_before_retry_min].max
+          Jobs.enqueue_in(wait_before_retry, :delete_post_and_sync, args)
+        end
+      else # Other issues
+        # Retry job
+        Jobs.enqueue_in(60, :delete_post_and_sync, args) # Wait 60 seconds
+      end
+    end
     
     def execute(args)
       post_type = args[:post_type]
@@ -51,6 +97,7 @@ module ::Jobs
       )
       
       post_edits = JSON.parse(faraday.get("/posts/#{post_id}/revisions/latest.json").body)
+      
       if post_edits.status == 200 && operation == "edit_topic" then
         old_category_slug = category_slug
         if post_edits.category_changes then
@@ -61,54 +108,51 @@ module ::Jobs
           old_file_path = old_file_path.sub("@{category_slug}", old_category_slug)
         end
         old_topic_title = post_edits.title_changes.side_by_side.split('<div class=\"revision-content\"><div>')[1].split('</div></div><div class=\"revision-content\">')[0].split("</div></div>")[0].sub("<del>", "").sub("</del>", "")
+        # Discourse's in-built Slug
         old_topic_slug = Slug.for(old_topic_title)
         if old_file_path.include? "@{topic_slug}" then
           old_file_path = old_file_path.sub("@{topic_slug}", old_topic_slug)
         end
+
+        delete_file(old_file_path)
       end
 
-      if operation == "delete_topic" then
-        category_slug = Category.find_by(id: category_id).slug
-        file_path = SiteSetting.topic_post_path
+      if operation == "delete_post" then
+        file_path = SiteSetting.reply_post_path
         if file_path.include? "@{category_slug}" then
           file_path = file_path.sub("@{category_slug}", category_slug)
         end
         if file_path.include? "@{topic_slug}" then
           file_path = file_path.sub("@{topic_slug}", topic_slug)
         end
-        
-        req_body = {
-          message: SiteSetting.delete_commit_message,
-          committer: {
-            "name": SiteSetting.github_committer_username,
-            "email": SiteSetting.github_committer_email
-          },
-          sha: get_sha(file_path)
-        }
 
-        json_req_body = JSON.generate(req_body)
-        resp = conn.delete("/repos/#{repo_user}/#{repo_name}/contents/#{file_path}", json_req_body)
+        delete_file(file_path)
+      end
 
-        if resp.status == 200 then
-          if SiteSetting.log_when_post_uploaded then
-            Rails.logger.info "Topic '#{topic_name}' has been deleted"
+      if operation == "delete_topic" then
+        category_slug = Category.find_by(id: category_id).slug
+        file_path = ""
+        if !args[:file_path] then
+          file_path = SiteSetting.topic_post_path
+          if file_path.include? "@{category_slug}" then
+            file_path = file_path.sub("@{category_slug}", category_slug)
           end
-        elsif resp.status == 422 then # Job failed
-          Rails.logger.error "An error occurred when trying to delete '#{topic_name}': #{resp.body}"
-          if resp.headers["x-ratelimit-remaining"].to_i == 0 then # Rate limit reached
-            time_reset = Time.at(resp.headers["x-ratelimit-remaining"].to_i)
-            time_now = Time.now()
-            time_until_reset = time_reset - time_now # In seconds
-            wait_before_retry_min = 60 # 60 seconds
-            wait_before_retry = [time_until_reset, wait_before_retry_min].max
-            Jobs.enqueue_in(wait_before_retry, :delete_post_and_sync, args)
+          if file_path.include? "@{topic_slug}" then
+            file_path = file_path.sub("@{topic_slug}", topic_slug)
           end
-        else # Other issues
-          # Retry job
-          Jobs.enqueue_in(60, :delete_post_and_sync, args) # Wait 60 seconds
+        else
+          file_path = args[:file_path]
         end
+        
+        delete_file(file_path)
 
-        # TODO: Add logic to delete associated posts
+        # Delete replies
+        synced_replies_list = JSON.parse(conn.get("/posts/#{post_id}/revisions/latest.json").body)
+        synced_replies_list.each do |reply_file|
+          # Queue delete_reply here
+          # FOrmat: https://api.github.com/repos/NateDhaliwal/ENDPOINT-discourse-static-pages-sync/contents/site-feedback
+        end
+        
       end
     end
   end
