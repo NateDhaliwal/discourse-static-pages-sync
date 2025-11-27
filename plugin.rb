@@ -103,7 +103,8 @@ after_initialize do
         created_at: post[:created_at].to_s,
         updated_at: post[:updated_at].to_s,
         whisper: post[:post_type] == 4,
-        post_number: post[:post_number].to_i
+        post_number: post[:post_number].to_i,
+        post_id: post[:post_number] == 1 ? post_id: topic.ordered_posts[0].id.to_i : post[:id].to_i
       )
     end
   end
