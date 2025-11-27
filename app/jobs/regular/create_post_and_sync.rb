@@ -150,8 +150,8 @@ module ::Jobs
 
       if operation == "update" then
         Jobs.enqueue(
-          :destroy_post_and_sync
-          post_type: post_type
+          :destroy_post_and_sync,
+          post_type: post_type,
           post_id: post_id
         )
       end
