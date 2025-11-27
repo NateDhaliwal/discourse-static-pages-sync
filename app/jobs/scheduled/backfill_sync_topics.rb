@@ -59,7 +59,7 @@ class ::Jobs::BackfillSyncTopics < ::Jobs::Scheduled
       end
 
       # Update last_synced
-      last_synced.update!(topic_id: sync_start)
+      last_synced.update!(topic_id: sync_start - 1)
     end
     # else
     #   # Create last_synced
