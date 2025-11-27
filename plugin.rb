@@ -123,13 +123,13 @@ after_initialize do
 
   on(:post_destroyed) do |post|
     if (post_type == 1 || post_type == 2) && (post[:post_number] > 1) then
-    Jobs.enqueue(
-      :destroy_post_and_sync,
-      post_type: "post",
-      operation: "delete_post",
-      topic_id: post[:topic_id].to_i,
-      post_number: post[:post_number].to_i,
-      post_id: post[:id].to_i
-    )
+      Jobs.enqueue(
+        :destroy_post_and_sync,
+        post_type: "post",
+        operation: "delete_post",
+        topic_id: post[:topic_id].to_i,
+        post_number: post[:post_number].to_i,
+        post_id: post[:id].to_i
+      )
   end
 end
