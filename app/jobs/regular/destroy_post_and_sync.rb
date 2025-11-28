@@ -110,6 +110,7 @@ module ::Jobs
       
       post_edits = JSON.parse(Faraday.get("#{Discourse.base_url}/posts/#{post_id}/revisions/latest.json").body)
       puts post_edits
+      puts post_edits["title_changes"]
       
       if !post_edits["errors"] && operation == "edit_topic" then
         old_category_slug = category_slug
@@ -120,7 +121,16 @@ module ::Jobs
         if old_file_path.include? "@{category_slug}" then
           old_file_path = old_file_path.sub("@{category_slug}", old_category_slug)
         end
-        old_topic_title = post_edits["title_changes"]["side_by_side"].split('<div class=\"revision-content\"><div>')[1].split('</div></div><div class=\"revision-content\">')[0].split("</div></div>")[0].sub("<del>", "").sub("</del>", "")
+
+        # In case it does not exist
+        return if !post_edits["title_changes"]["side_by_side"]
+        
+        old_topic_title = post_edits["title_changes"]["side_by_side"]
+          &.split('<div class=\"revision-content\"><div>')[1]
+          &.split('</div></div><div class=\"revision-content\">')[0]
+          &.split("</div></div>")[0]
+          &.sub("<del>", "")
+          &.sub("</del>", "")
         # Discourse's in-built Slug
         old_topic_slug = Slug.for(old_topic_title)
         if old_file_path.include? "@{topic_slug}" then
