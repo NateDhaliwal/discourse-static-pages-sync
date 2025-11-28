@@ -24,11 +24,13 @@ module ::Jobs
         resp = conn.get("/repos/#{repo_user}/#{repo_name}/contents/#{file_path}")
         if resp.status == 200 then          
           body = JSON.parse(resp.body)
+          puts body
           if body["sha"] then
             sha = body["sha"]
           end
         end
         puts sha
+        return sha
       end
   
       def delete_file(file_path, sha_arg=nil, topic_id, args)
@@ -206,7 +208,7 @@ module ::Jobs
           file_path = file_path.sub("@{topic_slug}", topic_slug)
         end
 
-        puts "fp: " + file_path
+        puts "dp_fp: " + file_path
 
         delete_file(file_path, topic_id=topic_id, args=args)
       end
@@ -228,7 +230,7 @@ module ::Jobs
           file_path = args[:file_path]
         end
 
-        puts "fp: " + file_path
+        puts "dt_fp: " + file_path
         
         delete_file(file_path, topic_id=topic_id, args=args)
 
