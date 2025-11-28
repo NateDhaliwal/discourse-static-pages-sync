@@ -115,7 +115,7 @@ module ::Jobs
         if post_edits["category_changes"] then
           old_category_slug = Category.find_by(id: post_edits["category_changes"]["previous"]).slug
         end
-        old_file_path = post_type == "topic" ? SiteSetting.topic_post_path : SiteSetting.reply_post_path.sub("@{post_number}", post_number.to_s)
+        old_file_path = SiteSetting.topic_post_path
         if old_file_path.include? "@{category_slug}" then
           old_file_path = old_file_path.sub("@{category_slug}", old_category_slug)
         end
