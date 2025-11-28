@@ -22,8 +22,8 @@ module ::Jobs
         
         sha = nil # Automatically returned, no need for 'return sha' at the bottom
         resp = conn.get("/repos/#{repo_user}/#{repo_name}/contents/#{file_path}")
-        puts resp.status
-        puts resp.body
+        puts "status: " + resp.status.to_s
+        puts "body: " + resp.body.to_s
         
         if resp.status == 200 then          
           body = JSON.parse(resp.body)
@@ -32,7 +32,7 @@ module ::Jobs
             sha = body["sha"]
           end
         end
-        puts sha
+        puts "sha: " + sha.to_s
         return sha
       end
   
