@@ -30,7 +30,7 @@ module ::Jobs
         end
       end
   
-      def delete_file(file_path, sha_arg=nil)
+      def delete_file(file_path, sha_arg=nil, topic_id=args[:topic_id])
         target_repo = SiteSetting.target_github_repo
         repo_user = target_repo.split("https://github.com/")[1].split("/")[0]
         repo_name = target_repo.split("https://github.com/")[1].split("/")[1]
@@ -60,10 +60,10 @@ module ::Jobs
   
         if resp.status == 200 then
           if SiteSetting.log_when_post_uploaded then
-            Rails.logger.info "Topic '#{Topic.find_by(id: @topic_id).title}' has been deleted/edited"
+            Rails.logger.info "Topic '#{Topic.find_by(id: topic_id).title}' has been deleted/edited"
           end
         elsif resp.status == 422 then # Job failed
-          Rails.logger.error "An error occurred when trying to delete/edit '#{Topic.find_by(id: @topic_id).title}': #{resp.body}"
+          Rails.logger.error "An error occurred when trying to delete/edit '#{Topic.find_by(id: topic_id).title}': #{resp.body}"
           if resp.headers["x-ratelimit-remaining"].to_i == 0 then # Rate limit reached
             time_reset = Time.at(resp.headers["x-ratelimit-remaining"].to_i)
             time_now = Time.now()
@@ -83,10 +83,10 @@ module ::Jobs
       post_number = args[:post_number]
       post_id = args[:post_id]
       operation = args[:operation]
-      @topic_id = args[:topic_id]
-      puts @topic_id
-      topic_slug = args[:topic_slug] || Topic.find_by(id: @topic_id).slug.to_s
-      category_id = args[:category_id] || Topic.find_by(id: @topic_id).category_id.to_i
+      topic_id = args[:topic_id]
+      puts topic_id
+      topic_slug = args[:topic_slug] || Topic.find_by(id: topic_id).slug.to_s
+      category_id = args[:category_id] || Topic.find_by(id: topic_id).category_id.to_i
       category_slug = Category.find_by(id: category_id).slug
 
       target_repo = SiteSetting.target_github_repo
@@ -138,14 +138,14 @@ module ::Jobs
           :create_post_and_sync,
           post_type: "topic",
           operation: "create",
-          title: Topic.find_by(id: @topic_id).title.to_s,
-          topic_id: @topic_id,
-          user_id: Topic.find_by(id: @topic_id).user_id.to_i,
+          title: Topic.find_by(id: topic_id).title.to_s,
+          topic_id: topic_id,
+          user_id: Topic.find_by(id: topic_id).user_id.to_i,
           category_id: category_id.to_i,
-          cooked: Topic.find_by(id: @topic_id).ordered_posts[0].cooked.to_s,
-          created_at: Topic.find_by(id: @topic_id).created_at.to_s,
-          updated_at: Topic.find_by(id: @topic_id).updated_at.to_s,
-          whisper: Topic.find_by(id: @topic_id).ordered_posts[0].post_type == 4,
+          cooked: Topic.find_by(id: topic_id).ordered_posts[0].cooked.to_s,
+          created_at: Topic.find_by(id: topic_id).created_at.to_s,
+          updated_at: Topic.find_by(id: topic_id).updated_at.to_s,
+          whisper: Topic.find_by(id: topic_id).ordered_posts[0].post_type == 4,
           post_number: 1,
           post_id: post_id.to_i
         )
@@ -175,7 +175,7 @@ module ::Jobs
           end
 
           # Add new posts
-          Topic.find_by(id: @topic_id).ordered_posts.each do |post|
+          Topic.find_by(id: topic_id).ordered_posts.each do |post|
             post_type = post[:post_type]
             if post.post_number > 1 && (post_type == 1 || post_type == 2) then
               Jobs.enqueue(
@@ -183,7 +183,7 @@ module ::Jobs
                 post_type: "post",
                 operation: "create",
                 user_id: post[:user_id].to_i,
-                topic_id: post[:@topic_id].to_i,
+                topic_id: post[:topic_id].to_i,
                 cooked: post[:cooked].to_s,
                 created_at: post[:created_at].to_s,
                 updated_at: post[:updated_at].to_s,
