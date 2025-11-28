@@ -54,6 +54,7 @@ module ::Jobs
         }
   
         json_req_body = JSON.generate(req_body)
+        puts "/repos/#{repo_user}/#{repo_name}/contents/#{file_path}"
         resp = conn.delete("/repos/#{repo_user}/#{repo_name}/contents/#{file_path}", json_req_body)
   
         if resp.status == 200 then
@@ -78,20 +79,11 @@ module ::Jobs
 
       
       post_type = args[:post_type]
-      puts "a: " + post_type.to_s
       post_number = args[:post_number]
-      puts "b: " + post_number.to_s
       post_id = args[:post_id]
-      puts "c: " + post_id.to_s
       operation = args[:operation]
-      puts "d: " + operation.to_s
       topic_id = args[:topic_id]
-      puts "e: " + topic_id.to_s
       topic_slug = args[:topic_slug] || Topic.find_by(id: topic_id).slug.to_s
-      puts "f: " + topic_slug.to_s
-      puts "g: " + args[:category_id].to_s
-      puts "h: " + Topic.find_by(id: topic_id).title.to_s
-      puts "i: " + Topic.find_by(id: topic_id).category_id.to_s
       category_id = args[:category_id] || Topic.find_by(id: topic_id).category_id.to_i
       category_slug = Category.find_by(id: category_id).slug
 
@@ -109,8 +101,6 @@ module ::Jobs
       )
       
       post_edits = JSON.parse(Faraday.get("#{Discourse.base_url}/posts/#{post_id}/revisions/latest.json").body)
-      puts post_edits
-      puts post_edits["title_changes"]
       
       if !post_edits["errors"] && operation == "edit_topic" then
         old_category_slug = category_slug
