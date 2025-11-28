@@ -122,10 +122,47 @@ module ::Jobs
         # Create new topic file here
         Jobs.enqueue(
           :create_post_and_sync,
-          
+          post_type: "topic",
+          operation: "create",
+          title: Topic.find_by(id: topic_id).title.to_s,
+          topic_id: topic_id,
+          user_id: Topic.find_by(id: topic_id).user_id.to_i,
+          category_id: category_id.to_i,
+          cooked: Topic.find_by(id: topic_id).ordered_posts[0].cooked.to_s,
+          created_at: Topic.find_by(id: topic_id).created_at.to_s,
+          updated_at: Topic.find_by(id: topic_id).updated_at.to_s,
+          whisper: Topic.find_by(id: topic_id).ordered_posts[0].post_type == 4,
+          post_number: 1,
+          post_id: post_id.to_i
         )
         # Move replies if slug/category changed (in case SiteSetting.reply_post_path contains @{category_slug})
-        # ...
+        if old_topic_slug != topic_slug then
+          # Delete replies
+          replies_file_path = SiteSetting.reply_post_path
+          if replies_file_path.include? "@{category_slug}" then
+            replies_file_path = replies_file_path.sub("@{category_slug}", category_slug)
+          end
+          if replies_file_path.include? "@{topic_slug}" then
+            replies_file_path = replies_file_path.sub("@{topic_slug}", topic_slug)
+          end
+          # We don't replace post_number because that will be appended later on
+          if replies_file_path.include? "@{post_number}" then
+            replies_file_path = replies_file_path.slice("@{post_number}")
+          end
+          # TODO: Maybe allow different file extensions?
+          replies_file_path = replies_file_path.slice(".md") # Remove '.md.' from the back
+          
+          synced_replies_list = JSON.parse(conn.get("/repos/#{repo_user}/#{repo_name}/contents/#{replies_file_path}").body)
+          synced_replies_list.each do |reply_file|
+            # Format: https://api.github.com/repos/NateDhaliwal/ENDPOINT-discourse-static-pages-sync/contents/site-feedback
+            reply_file_path = replies_file_path + reply_file.name.to_s
+            reply_file_sha = reply_file.sha.to_s
+            delete_file(reply_file_path, reply_file_sha)
+          end
+
+          # Add new posts
+          
+        end
       end
 
       if operation == "delete_post" then
