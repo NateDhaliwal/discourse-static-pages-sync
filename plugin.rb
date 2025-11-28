@@ -126,7 +126,6 @@ after_initialize do
       operation: "delete_topic",
       topic_slug: topic.slug,
       category_id: topic.category_id,
-      topic_id: topic[:id].to_i,
       post_number: 1,
       post_id: topic.ordered_posts[0].id.to_i
     )
