@@ -83,7 +83,7 @@ module ::Jobs
       operation = args[:operation]
       topic_slug = args[:topic_slug]
       topic_id = args[:topic_id]
-      category_id = args[:category_id]
+      category_id = args[:category_id] || Topic.find_by(id: topic_id).category_id.to_i
       category_slug = Category.find_by(id: category_id).slug
 
       target_repo = SiteSetting.target_github_repo
