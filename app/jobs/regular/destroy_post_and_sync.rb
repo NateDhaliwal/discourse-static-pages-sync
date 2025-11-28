@@ -109,6 +109,7 @@ module ::Jobs
       )
       
       post_edits = JSON.parse(Faraday.get("#{Discourse.base_url}/posts/#{post_id}/revisions/latest.json").body)
+      puts post_edits
       
       if !post_edits["errors"] && operation == "edit_topic" then
         old_category_slug = category_slug
