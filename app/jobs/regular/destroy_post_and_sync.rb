@@ -54,8 +54,9 @@ module ::Jobs
         }
   
         json_req_body = JSON.generate(req_body)
-        puts "/repos/#{repo_user}/#{repo_name}/contents/#{file_path}"
-        resp = conn.delete("/repos/#{repo_user}/#{repo_name}/contents/#{file_path}", json_req_body)
+        resp = conn.delete("/repos/#{repo_user}/#{repo_name}/contents/#{file_path}") do |request|
+          request.body = json_req_body
+        end
   
         if resp.status == 200 then
           if SiteSetting.log_when_post_uploaded then
