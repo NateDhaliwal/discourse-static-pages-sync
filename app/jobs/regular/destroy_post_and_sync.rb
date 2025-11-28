@@ -21,6 +21,7 @@ module ::Jobs
         )
         
         sha = nil # Automatically returned, no need for 'return sha' at the bottom
+        puts file_path
         resp = conn.get("/repos/#{repo_user}/#{repo_name}/contents/#{file_path}")
         puts "status: " + resp.status.to_s
         puts "body: " + resp.body.to_s
