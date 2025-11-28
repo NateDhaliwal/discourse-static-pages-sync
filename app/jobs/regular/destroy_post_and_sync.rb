@@ -85,10 +85,10 @@ module ::Jobs
       puts "c: " + post_id.to_s
       operation = args[:operation]
       puts "d: " + operation.to_s
-      topic_slug = args[:topic_slug]
-      puts "e: " + topic_slug.to_s
       topic_id = args[:topic_id]
-      puts "f: " + topic_id.to_s
+      puts "e: " + topic_id.to_s
+      topic_slug = args[:topic_slug] || Topic.find_by(id: topic_id).slug.to_s
+      puts "f: " + topic_slug.to_s
       puts "g: " + args[:category_id].to_s
       puts "h: " + Topic.find_by(id: topic_id).title.to_s
       puts "i: " + Topic.find_by(id: topic_id).category_id.to_s
