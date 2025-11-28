@@ -138,8 +138,6 @@ module ::Jobs
 
         puts "Old fp:" + old_file_path
 
-        delete_file(old_file_path, topic_id=topic_id, args=args)
-
         # Create new topic file here
         Jobs.enqueue(
           :create_post_and_sync,
@@ -156,6 +154,9 @@ module ::Jobs
           post_number: 1,
           post_id: post_id.to_i
         )
+
+        delete_file(old_file_path, topic_id=topic_id, args=args)
+
         # Move replies if slug/category changed (in case SiteSetting.reply_post_path contains @{category_slug})
         if (old_topic_slug != topic_slug && SiteSetting.reply_post_path.include?("@{topic_slug}")) ||
           (old_category_slug != category_slug && SiteSetting.reply_post_path.include?("@{category_slug}")) then
@@ -211,6 +212,9 @@ module ::Jobs
         end
         if file_path.include? "@{topic_slug}" then
           file_path = file_path.sub("@{topic_slug}", topic_slug)
+        end
+        if file_path.include? "@{post_number}" then
+          file_path = file_path.sub("@{post_number}", post_number)
         end
 
         puts "dp_fp: " + file_path
