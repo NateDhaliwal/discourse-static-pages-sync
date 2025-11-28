@@ -136,7 +136,7 @@ module ::Jobs
           post_id: post_id.to_i
         )
         # Move replies if slug/category changed (in case SiteSetting.reply_post_path contains @{category_slug})
-        if old_topic_slug != topic_slug then
+        if old_topic_slug != topic_slug || old_category_slug != category_slug then
           # Delete replies
           replies_file_path = SiteSetting.reply_post_path
           if replies_file_path.include? "@{category_slug}" then
@@ -161,7 +161,24 @@ module ::Jobs
           end
 
           # Add new posts
-          
+          Topic.find_by(id: topic_id).ordered_posts.each do |post|
+            post_type = post[:post_type]
+            if post.post_number > 1 && (post_type == 1 || post_type == 2) then
+              Jobs.enqueue(
+                :create_post_and_sync,
+                post_type: "post",
+                operation: "create",
+                user_id: post[:user_id].to_i,
+                topic_id: post[:topic_id].to_i,
+                cooked: post[:cooked].to_s,
+                created_at: post[:created_at].to_s,
+                updated_at: post[:updated_at].to_s,
+                whisper: post[:post_type] == 4,
+                post_number: post[:post_number].to_i,
+                post_id: post[:id].to_i
+              )
+            end
+          end
         end
       end
 
