@@ -78,11 +78,20 @@ module ::Jobs
 
       
       post_type = args[:post_type]
+      puts "a: " + post_type.to_s
       post_number = args[:post_number]
+      puts "b: " + post_type.to_s
       post_id = args[:post_id]
+      puts "c: " + post_type.to_s
       operation = args[:operation]
+      puts "d: " + post_type.to_s
       topic_slug = args[:topic_slug]
+      puts "e: " + post_type.to_s
       topic_id = args[:topic_id]
+      puts "f: " + post_type.to_s
+      puts "g: " + args[:category_id].to_s
+      puts "h: " + Topic.find_by(id: topic_id).title.to_s
+      puts "i: " + Topic.find_by(id: topic_id).category_id.to_s
       category_id = args[:category_id] || Topic.find_by(id: topic_id).category_id.to_i
       category_slug = Category.find_by(id: category_id).slug
 
@@ -116,6 +125,8 @@ module ::Jobs
         if old_file_path.include? "@{topic_slug}" then
           old_file_path = old_file_path.sub("@{topic_slug}", old_topic_slug)
         end
+
+        puts "Old fp:" + old_file_path
 
         delete_file(old_file_path)
 
@@ -191,6 +202,8 @@ module ::Jobs
           file_path = file_path.sub("@{topic_slug}", topic_slug)
         end
 
+        puts "fp: " + file_path
+
         delete_file(file_path)
       end
 
@@ -210,6 +223,8 @@ module ::Jobs
         else
           file_path = args[:file_path]
         end
+
+        puts "fp: " + file_path
         
         delete_file(file_path)
 
