@@ -28,9 +28,10 @@ module ::Jobs
             sha = body["sha"]
           end
         end
+        puts sha
       end
   
-      def delete_file(file_path, sha_arg=nil, topic_id=args[:topic_id])
+      def delete_file(file_path, sha_arg=nil, topic_id, args)
         target_repo = SiteSetting.target_github_repo
         repo_user = target_repo.split("https://github.com/")[1].split("/")[0]
         repo_name = target_repo.split("https://github.com/")[1].split("/")[1]
@@ -131,7 +132,7 @@ module ::Jobs
 
         puts "Old fp:" + old_file_path
 
-        delete_file(old_file_path)
+        delete_file(old_file_path, topic_id=topic_id, args=args)
 
         # Create new topic file here
         Jobs.enqueue(
@@ -171,7 +172,7 @@ module ::Jobs
             # Format: https://api.github.com/repos/NateDhaliwal/ENDPOINT-discourse-static-pages-sync/contents/site-feedback
             reply_file_path = replies_file_path + reply_file.name.to_s
             reply_file_sha = reply_file.sha.to_s
-            delete_file(reply_file_path, reply_file_sha)
+            delete_file(reply_file_path, sha=reply_file_sha, topic_id=topic_id, args=args)
           end
 
           # Add new posts
@@ -207,7 +208,7 @@ module ::Jobs
 
         puts "fp: " + file_path
 
-        delete_file(file_path)
+        delete_file(file_path, topic_id=topic_id, args=args)
       end
 
       if operation == "delete_topic" then
@@ -229,7 +230,7 @@ module ::Jobs
 
         puts "fp: " + file_path
         
-        delete_file(file_path)
+        delete_file(file_path, topic_id=topic_id, args=args)
 
         # Delete replies
         replies_file_path = SiteSetting.reply_post_path
@@ -251,7 +252,7 @@ module ::Jobs
           # Format: https://api.github.com/repos/NateDhaliwal/ENDPOINT-discourse-static-pages-sync/contents/site-feedback
           reply_file_path = replies_file_path + reply_file.name.to_s
           reply_file_sha = reply_file.sha.to_s
-          delete_file(reply_file_path, reply_file_sha)
+          delete_file(reply_file_path, sha=reply_file_sha, topic_id=topic_id, args=args)
         end
       end
     end
