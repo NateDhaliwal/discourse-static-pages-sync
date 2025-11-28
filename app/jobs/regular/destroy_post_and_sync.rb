@@ -1,4 +1,7 @@
 # frozen_string_literal: true
+require 'json'
+require 'base64'
+require 'faraday'
 
 module ::Jobs
   class DestroyPostAndSync < ::Jobs::Base    
@@ -117,7 +120,10 @@ module ::Jobs
         delete_file(old_file_path)
 
         # Create new topic file here
-        # ...
+        Jobs.enqueue(
+          :create_post_and_sync,
+          
+        )
         # Move replies if slug/category changed (in case SiteSetting.reply_post_path contains @{category_slug})
         # ...
       end
