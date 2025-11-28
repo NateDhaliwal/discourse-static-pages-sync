@@ -63,7 +63,7 @@ module ::Jobs
             Rails.logger.info "Topic '#{Topic.find_by(id: @topic_id).title}' has been deleted/edited"
           end
         elsif resp.status == 422 then # Job failed
-          Rails.logger.error "An error occurred when trying to delete/edit '#{Topic.}': #{resp.body}"
+          Rails.logger.error "An error occurred when trying to delete/edit '#{Topic.find_by(id: @topic_id).title}': #{resp.body}"
           if resp.headers["x-ratelimit-remaining"].to_i == 0 then # Rate limit reached
             time_reset = Time.at(resp.headers["x-ratelimit-remaining"].to_i)
             time_now = Time.now()
