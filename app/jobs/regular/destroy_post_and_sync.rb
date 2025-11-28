@@ -80,15 +80,15 @@ module ::Jobs
       post_type = args[:post_type]
       puts "a: " + post_type.to_s
       post_number = args[:post_number]
-      puts "b: " + post_type.to_s
+      puts "b: " + post_number.to_s
       post_id = args[:post_id]
-      puts "c: " + post_type.to_s
+      puts "c: " + post_id.to_s
       operation = args[:operation]
-      puts "d: " + post_type.to_s
+      puts "d: " + operation.to_s
       topic_slug = args[:topic_slug]
-      puts "e: " + post_type.to_s
+      puts "e: " + topic_slug.to_s
       topic_id = args[:topic_id]
-      puts "f: " + post_type.to_s
+      puts "f: " + topic_id.to_s
       puts "g: " + args[:category_id].to_s
       puts "h: " + Topic.find_by(id: topic_id).title.to_s
       puts "i: " + Topic.find_by(id: topic_id).category_id.to_s
