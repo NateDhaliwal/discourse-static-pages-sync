@@ -156,7 +156,7 @@ module ::Jobs
           post_id: post_id.to_i
         )
         # Move replies if slug/category changed (in case SiteSetting.reply_post_path contains @{category_slug})
-        if old_topic_slug != topic_slug || old_category_slug != category_slug then
+        if (old_topic_slug != topic_slug && SiteSetting.reply_post_path.include? "@{topic_slug}") || (old_category_slug != category_slug && SiteSetting.reply_post_path.include? "@{category_slug}") then
           # Delete replies
           replies_file_path = SiteSetting.reply_post_path
           if replies_file_path.include? "@{category_slug}" then
