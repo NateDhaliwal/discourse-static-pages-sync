@@ -125,7 +125,7 @@ module ::Jobs
         # In case it does not exist
         return if !post_edits["title_changes"]["side_by_side"]
         
-        old_topic_title = post_edits["title_changes"]["side_by_side"]
+        old_topic_title = post_edits["title_changes"]["side_by_side"].to_s
           &.split('<div class=\"revision-content\"><div>')[1]
           &.split('</div></div><div class=\"revision-content\">')[0]
           &.split("</div></div>")[0]
