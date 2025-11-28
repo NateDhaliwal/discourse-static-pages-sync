@@ -99,7 +99,7 @@ module ::Jobs
         }
       )
       
-      post_edits = JSON.parse(faraday.get("/posts/#{post_id}/revisions/latest.json").body)
+      post_edits = JSON.parse(Farada.get("/posts/#{post_id}/revisions/latest.json").body)
       
       if post_edits.status == 200 && operation == "edit_topic" then
         old_category_slug = category_slug
