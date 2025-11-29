@@ -38,7 +38,7 @@ module ::Jobs
         return sha
       end
   
-      def delete_file(file_path, sha_arg=nil, topic_id=nil, topic_name=nil, args)
+      def delete_file(file_path, sha_arg=nil, topic_id=nil, topic_name_arg=nil, args)
         target_repo = SiteSetting.target_github_repo
         repo_user = target_repo.split("https://github.com/")[1].split("/")[0]
         repo_name = target_repo.split("https://github.com/")[1].split("/")[1]
@@ -66,13 +66,13 @@ module ::Jobs
           request.body = json_req_body
         end
 
-        puts "TN: " + topic_name.to_s
+        puts "TN: " + topic_name_arg.to_s
         if resp.status == 200 then
           if SiteSetting.log_when_post_uploaded then
             Rails.logger.info "Topic '#{topic_name || Topic.find_by(id: topic_id).title}' has been deleted/edited"
           end
         elsif resp.status == 422 then # Job failed
-          Rails.logger.error "An error occurred when trying to delete/edit '#{topic_name || Topic.find_by(id: topic_id).title}' with error code #{resp.status}: #{resp.body}"
+          Rails.logger.error "An error occurred when trying to delete/edit '#{topic_name_arg || Topic.find_by(id: topic_id).title}' with error code #{resp.status}: #{resp.body}"
           if resp.headers["x-ratelimit-remaining"].to_i == 0 then # Rate limit reached
             time_reset = Time.at(resp.headers["x-ratelimit-remaining"].to_i)
             time_now = Time.now()
@@ -82,7 +82,7 @@ module ::Jobs
             Jobs.enqueue_in(wait_before_retry, :delete_post_and_sync, args)
           end
         else # Other issues
-          Rails.logger.error "An error occurred when trying to delete/edit '#{topic_name || Topic.find_by(id: topic_id).title}' with error code #{resp.status}: #{resp.body}"
+          Rails.logger.error "An error occurred when trying to delete/edit '#{topic_name_arg || Topic.find_by(id: topic_id).title}' with error code #{resp.status}: #{resp.body}"
           # Retry job
           Jobs.enqueue_in(60, :delete_post_and_sync, args) # Wait 60 seconds
         end
@@ -245,7 +245,7 @@ module ::Jobs
 
         puts "dt_fp: " + file_path
         puts "TN1: " + topic_name.to_s
-        delete_file(file_path, topic_name=topic_name, args=args)
+        delete_file(file_path, topic_name_arg=topic_name, args=args)
 
         # Delete replies
         replies_file_path = SiteSetting.reply_post_path
