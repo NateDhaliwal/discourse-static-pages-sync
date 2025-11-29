@@ -107,7 +107,7 @@ after_initialize do
           post_id: post[:id].to_i
         )
       else
-        puts "Topic id: " + post[:topic_id].to_i
+        puts "Topic id: " + post[:topic_id].to_s
         Jobs.enqueue(
           :destroy_post_and_sync,
           post_type: "topic",
@@ -134,7 +134,7 @@ after_initialize do
 
   on(:post_destroyed) do |post|
     post_type = post[:post_type]
-    puts "Topic id: " + post[:topic_id].to_i
+    puts "Topic id: " + post[:topic_id].to_s
     if (post_type == 1 || post_type == 2) && (post[:post_number] > 1) then
       Jobs.enqueue(
         :destroy_post_and_sync,
