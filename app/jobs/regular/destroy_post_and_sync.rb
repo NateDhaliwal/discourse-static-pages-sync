@@ -214,7 +214,7 @@ module ::Jobs
           file_path = file_path.sub("@{topic_slug}", topic_slug)
         end
         if file_path.include? "@{post_number}" then
-          file_path = file_path.sub("@{post_number}", post_number)
+          file_path = file_path.sub("@{post_number}", post_number.to_s)
         end
 
         puts "dp_fp: " + file_path
@@ -233,7 +233,7 @@ module ::Jobs
             file_path = file_path.sub("@{topic_slug}", topic_slug)
           end
           if file_path.include? "@{post_number}" then
-            file_path = file_path.sub("@{post_number}", post_number)
+            file_path = file_path.sub("@{post_number}", post_number.to_s)
           end
         else
           file_path = args[:file_path]
