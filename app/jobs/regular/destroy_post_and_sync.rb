@@ -173,10 +173,10 @@ module ::Jobs
             end
             # We don't replace post_number because that will be appended later on
             if replies_file_path.include? "@{post_number}" then
-              replies_file_path = replies_file_path.slice("@{post_number}")
+              replies_file_path = replies_file_path.sub("@{post_number}", "")
             end
             # TODO: Maybe allow different file extensions?
-            replies_file_path = replies_file_path.slice(".md") # Remove '.md.' from the back
+            replies_file_path = replies_file_path.sub(".md", "") # Remove '.md.' from the back
             
             synced_replies_list = JSON.parse(conn.get("/repos/#{repo_user}/#{repo_name}/contents/#{replies_file_path}").body)
             synced_replies_list.each do |reply_file|
