@@ -51,8 +51,7 @@ module ::Jobs
             "X-GitHub-Api-Version" => "2022-11-28"
           }
         )
-        puts sha_arg.to_s
-        puts get_sha(file_path)
+
         req_body = {
           message: SiteSetting.delete_commit_message,
           committer: {
@@ -66,7 +65,8 @@ module ::Jobs
         resp = conn.delete("/repos/#{repo_user}/#{repo_name}/contents/#{file_path}") do |request|
           request.body = json_req_body
         end
-  
+
+        puts "TN: " + topic_name.to_s
         if resp.status == 200 then
           if SiteSetting.log_when_post_uploaded then
             Rails.logger.info "Topic '#{topic_name || Topic.find_by(id: topic_id).title}' has been deleted/edited"
