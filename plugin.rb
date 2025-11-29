@@ -107,7 +107,7 @@ after_initialize do
           post_id: post[:id].to_i
         )
       else
-        puts "Topic id: " + post[:topic_id].to_s
+        puts "Topic id EDITED: " + post[:topic_id].to_s
         Jobs.enqueue(
           :destroy_post_and_sync,
           post_type: "topic",
