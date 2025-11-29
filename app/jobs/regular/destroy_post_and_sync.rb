@@ -111,97 +111,98 @@ module ::Jobs
           "X-GitHub-Api-Version" => "2022-11-28"
         }
       )
-      
-      if !post_edits["errors"] && operation == "edit_topic" then
+      if operation == "edit_topic" then
         post_edits = JSON.parse(Faraday.get("#{Discourse.base_url}/posts/#{post_id}/revisions/latest.json").body)
-        old_category_slug = category_slug
-        if post_edits["category_changes"] then
-          old_category_slug = Category.find_by(id: post_edits["category_changes"]["previous"]).slug
-        end
-        old_file_path = SiteSetting.topic_post_path
-        if old_file_path.include? "@{category_slug}" then
-          old_file_path = old_file_path.sub("@{category_slug}", old_category_slug)
-        end
-
-        # In case it does not exist
-        return if !post_edits["title_changes"]["side_by_side"]
-        
-        old_topic_title = post_edits["title_changes"]["side_by_side"].to_s
-          .split("<div class=\"revision-content\"><div>")[1]
-          .split("</div></div><div class=\"revision-content\">")[0]
-          .split("</div></div>")[0]
-          .sub("<del>", "")
-          .sub("</del>", "")
-        # Discourse's in-built Slug
-        old_topic_slug = Slug.for(old_topic_title)
-        if old_file_path.include? "@{topic_slug}" then
-          old_file_path = old_file_path.sub("@{topic_slug}", old_topic_slug)
-        end
-
-        puts "Old fp:" + old_file_path
-
-        # Create new topic file here
-        Jobs.enqueue(
-          :create_post_and_sync,
-          post_type: "topic",
-          operation: "create",
-          title: Topic.find_by(id: topic_id).title.to_s,
-          topic_id: topic_id,
-          user_id: Topic.find_by(id: topic_id).user_id.to_i,
-          category_id: category_id.to_i,
-          cooked: Topic.find_by(id: topic_id).ordered_posts[0].cooked.to_s,
-          created_at: Topic.find_by(id: topic_id).created_at.to_s,
-          updated_at: Topic.find_by(id: topic_id).updated_at.to_s,
-          whisper: Topic.find_by(id: topic_id).ordered_posts[0].post_type == 4,
-          post_number: 1,
-          post_id: post_id.to_i
-        )
-
-        delete_file(old_file_path, topic_id=topic_id, args=args)
-
-        # Move replies if slug/category changed (in case SiteSetting.reply_post_path contains @{category_slug})
-        if (old_topic_slug != topic_slug && SiteSetting.reply_post_path.include?("@{topic_slug}")) ||
-          (old_category_slug != category_slug && SiteSetting.reply_post_path.include?("@{category_slug}")) then
-          # Delete replies
-          replies_file_path = SiteSetting.reply_post_path
-          if replies_file_path.include? "@{category_slug}" then
-            replies_file_path = replies_file_path.sub("@{category_slug}", category_slug)
+        if !post_edits["errors"] then
+          old_category_slug = category_slug
+          if post_edits["category_changes"] then
+            old_category_slug = Category.find_by(id: post_edits["category_changes"]["previous"]).slug
           end
-          if replies_file_path.include? "@{topic_slug}" then
-            replies_file_path = replies_file_path.sub("@{topic_slug}", topic_slug)
+          old_file_path = SiteSetting.topic_post_path
+          if old_file_path.include? "@{category_slug}" then
+            old_file_path = old_file_path.sub("@{category_slug}", old_category_slug)
           end
-          # We don't replace post_number because that will be appended later on
-          if replies_file_path.include? "@{post_number}" then
-            replies_file_path = replies_file_path.slice("@{post_number}")
-          end
-          # TODO: Maybe allow different file extensions?
-          replies_file_path = replies_file_path.slice(".md") # Remove '.md.' from the back
+  
+          # In case it does not exist
+          return if !post_edits["title_changes"]["side_by_side"]
           
-          synced_replies_list = JSON.parse(conn.get("/repos/#{repo_user}/#{repo_name}/contents/#{replies_file_path}").body)
-          synced_replies_list.each do |reply_file|
-            # Format: https://api.github.com/repos/NateDhaliwal/ENDPOINT-discourse-static-pages-sync/contents/site-feedback
-            reply_file_path = replies_file_path + reply_file["name"].to_s
-            reply_file_sha = reply_file["sha"].to_s
-            delete_file(reply_file_path, sha=reply_file_sha, topic_id=topic_id, args=args)
+          old_topic_title = post_edits["title_changes"]["side_by_side"].to_s
+            .split("<div class=\"revision-content\"><div>")[1]
+            .split("</div></div><div class=\"revision-content\">")[0]
+            .split("</div></div>")[0]
+            .sub("<del>", "")
+            .sub("</del>", "")
+          # Discourse's in-built Slug
+          old_topic_slug = Slug.for(old_topic_title)
+          if old_file_path.include? "@{topic_slug}" then
+            old_file_path = old_file_path.sub("@{topic_slug}", old_topic_slug)
           end
-
-          # Add new posts
-          Topic.find_by(id: topic_id).ordered_posts.each do |post|
-            post_type = post[:post_type]
-            if post.post_number > 1 && (post_type == 1 || post_type == 2) then
-              Jobs.enqueue(
-                :create_post_and_sync,
-                post_type: "post",
-                operation: "create",
-                user_id: post[:user_id].to_i,
-                topic_id: post[:topic_id].to_i,
-                cooked: post[:cooked].to_s,
-                created_at: post[:created_at].to_s,
-                updated_at: post[:updated_at].to_s,
-                whisper: post[:post_type] == 4,
-                post_number: post[:post_number].to_i,
-                post_id: post[:id].to_i
-              )
+  
+          puts "Old fp:" + old_file_path
+  
+          # Create new topic file here
+          Jobs.enqueue(
+            :create_post_and_sync,
+            post_type: "topic",
+            operation: "create",
+            title: Topic.find_by(id: topic_id).title.to_s,
+            topic_id: topic_id,
+            user_id: Topic.find_by(id: topic_id).user_id.to_i,
+            category_id: category_id.to_i,
+            cooked: Topic.find_by(id: topic_id).ordered_posts[0].cooked.to_s,
+            created_at: Topic.find_by(id: topic_id).created_at.to_s,
+            updated_at: Topic.find_by(id: topic_id).updated_at.to_s,
+            whisper: Topic.find_by(id: topic_id).ordered_posts[0].post_type == 4,
+            post_number: 1,
+            post_id: post_id.to_i
+          )
+  
+          delete_file(old_file_path, topic_id=topic_id, args=args)
+  
+          # Move replies if slug/category changed (in case SiteSetting.reply_post_path contains @{category_slug})
+          if (old_topic_slug != topic_slug && SiteSetting.reply_post_path.include?("@{topic_slug}")) ||
+            (old_category_slug != category_slug && SiteSetting.reply_post_path.include?("@{category_slug}")) then
+            # Delete replies
+            replies_file_path = SiteSetting.reply_post_path
+            if replies_file_path.include? "@{category_slug}" then
+              replies_file_path = replies_file_path.sub("@{category_slug}", category_slug)
+            end
+            if replies_file_path.include? "@{topic_slug}" then
+              replies_file_path = replies_file_path.sub("@{topic_slug}", topic_slug)
+            end
+            # We don't replace post_number because that will be appended later on
+            if replies_file_path.include? "@{post_number}" then
+              replies_file_path = replies_file_path.slice("@{post_number}")
+            end
+            # TODO: Maybe allow different file extensions?
+            replies_file_path = replies_file_path.slice(".md") # Remove '.md.' from the back
+            
+            synced_replies_list = JSON.parse(conn.get("/repos/#{repo_user}/#{repo_name}/contents/#{replies_file_path}").body)
+            synced_replies_list.each do |reply_file|
+              # Format: https://api.github.com/repos/NateDhaliwal/ENDPOINT-discourse-static-pages-sync/contents/site-feedback
+              reply_file_path = replies_file_path + reply_file["name"].to_s
+              reply_file_sha = reply_file["sha"].to_s
+              delete_file(reply_file_path, sha=reply_file_sha, topic_id=topic_id, args=args)
+            end
+  
+            # Add new posts
+            Topic.find_by(id: topic_id).ordered_posts.each do |post|
+              post_type = post[:post_type]
+              if post.post_number > 1 && (post_type == 1 || post_type == 2) then
+                Jobs.enqueue(
+                  :create_post_and_sync,
+                  post_type: "post",
+                  operation: "create",
+                  user_id: post[:user_id].to_i,
+                  topic_id: post[:topic_id].to_i,
+                  cooked: post[:cooked].to_s,
+                  created_at: post[:created_at].to_s,
+                  updated_at: post[:updated_at].to_s,
+                  whisper: post[:post_type] == 4,
+                  post_number: post[:post_number].to_i,
+                  post_id: post[:id].to_i
+                )
+              end
             end
           end
         end
