@@ -122,12 +122,12 @@ after_initialize do
 
   on(:topic_destroyed) do |topic|
     puts "Topic slug: " + topic.slug.to_s
-    puts "Post ID: " + topic.ordered_posts[0].id.to_s
     Jobs.enqueue(
       :destroy_post_and_sync,
       post_type: "topic",
       operation: "delete_topic",
       topic_slug: topic.slug,
+      topic_name: topic.title
       category_id: topic.category_id,
       post_number: 1
     )
