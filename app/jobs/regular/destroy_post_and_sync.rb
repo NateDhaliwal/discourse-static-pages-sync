@@ -91,7 +91,7 @@ module ::Jobs
       post_id = args[:post_id]
       operation = args[:operation]
       topic_id = args[:topic_id]
-      puts "ID: " + topic_id
+      puts "ID: " + topic_id.to_s
       topic_slug = args[:topic_slug] || Topic.find_by(id: topic_id).slug.to_s
       category_id = args[:category_id] || Topic.find_by(id: topic_id).category_id.to_i
       category_slug = Category.find_by(id: category_id).slug
@@ -178,8 +178,8 @@ module ::Jobs
           synced_replies_list = JSON.parse(conn.get("/repos/#{repo_user}/#{repo_name}/contents/#{replies_file_path}").body)
           synced_replies_list.each do |reply_file|
             # Format: https://api.github.com/repos/NateDhaliwal/ENDPOINT-discourse-static-pages-sync/contents/site-feedback
-            reply_file_path = replies_file_path + reply_file.name.to_s
-            reply_file_sha = reply_file.sha.to_s
+            reply_file_path = replies_file_path + reply_file["name"].to_s
+            reply_file_sha = reply_file["sha"].to_s
             delete_file(reply_file_path, sha=reply_file_sha, topic_id=topic_id, args=args)
           end
 
@@ -261,8 +261,8 @@ module ::Jobs
         synced_replies_list = JSON.parse(conn.get("/repos/#{repo_user}/#{repo_name}/contents/#{replies_file_path}").body)
         synced_replies_list.each do |reply_file|
           # Format: https://api.github.com/repos/NateDhaliwal/ENDPOINT-discourse-static-pages-sync/contents/site-feedback
-          reply_file_path = replies_file_path + reply_file.name.to_s
-          reply_file_sha = reply_file.sha.to_s
+          reply_file_path = replies_file_path + reply_file["name"].to_s
+          reply_file_sha = reply_file["sha"].to_s
           delete_file(reply_file_path, sha=reply_file_sha, topic_id=topic_id, args=args)
         end
       end
