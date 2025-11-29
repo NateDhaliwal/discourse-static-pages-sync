@@ -112,9 +112,8 @@ module ::Jobs
         }
       )
       
-      post_edits = JSON.parse(Faraday.get("#{Discourse.base_url}/posts/#{post_id}/revisions/latest.json").body)
-      
       if !post_edits["errors"] && operation == "edit_topic" then
+        post_edits = JSON.parse(Faraday.get("#{Discourse.base_url}/posts/#{post_id}/revisions/latest.json").body)
         old_category_slug = category_slug
         if post_edits["category_changes"] then
           old_category_slug = Category.find_by(id: post_edits["category_changes"]["previous"]).slug
