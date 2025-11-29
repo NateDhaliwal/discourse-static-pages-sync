@@ -158,7 +158,7 @@ module ::Jobs
             post_id: post_id.to_i
           )
   
-          delete_file(old_file_path, topic_id=topic_id, args=args)
+          delete_file(old_file_path, nil, topic_id, nil, args)
   
           # Move replies if slug/category changed (in case SiteSetting.reply_post_path contains @{category_slug})
           if (old_topic_slug != topic_slug && SiteSetting.reply_post_path.include?("@{topic_slug}")) ||
@@ -183,7 +183,7 @@ module ::Jobs
               # Format: https://api.github.com/repos/NateDhaliwal/ENDPOINT-discourse-static-pages-sync/contents/site-feedback
               reply_file_path = replies_file_path + reply_file["name"].to_s
               reply_file_sha = reply_file["sha"].to_s
-              delete_file(reply_file_path, sha=reply_file_sha, topic_id=topic_id, args=args)
+              delete_file(reply_file_path, reply_file_sha, topic_id, nil, args)
             end
   
             # Add new posts
@@ -223,7 +223,7 @@ module ::Jobs
 
         puts "dp_fp: " + file_path
 
-        delete_file(file_path, topic_id=topic_id, args=args)
+        delete_file(file_path, nil, topic_id, nil, args)
       end
 
       if operation == "delete_topic" then
@@ -245,7 +245,7 @@ module ::Jobs
 
         puts "dt_fp: " + file_path
         puts "TN1: " + topic_name.to_s
-        delete_file(file_path, topic_name_arg=topic_name, args=args)
+        delete_file(file_path, nil, nil, topic_name, args)
 
         # Delete replies
         replies_file_path = SiteSetting.reply_post_path
@@ -267,7 +267,7 @@ module ::Jobs
           # Format: https://api.github.com/repos/NateDhaliwal/ENDPOINT-discourse-static-pages-sync/contents/site-feedback
           reply_file_path = replies_file_path + reply_file["name"].to_s
           reply_file_sha = reply_file["sha"].to_s
-          delete_file(reply_file_path, sha=reply_file_sha, topic_id=topic_id, args=args)
+          delete_file(reply_file_path, reply_file_sha, topic_id, nil, args)
         end
       end
     end
