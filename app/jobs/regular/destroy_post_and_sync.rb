@@ -72,7 +72,7 @@ module ::Jobs
             Rails.logger.info "Topic '#{topic_name || Topic.find_by(id: topic_id).title}' has been deleted/edited"
           end
         elsif resp.status == 422 then # Job failed
-          Rails.logger.error "An error occurred when trying to delete/edit '#{topic_name || Topic.find_by(id: topic_id).title}': #{resp.body}"
+          Rails.logger.error "An error occurred when trying to delete/edit '#{topic_name || Topic.find_by(id: topic_id).title}' with error code #{resp.status}: #{resp.body}"
           if resp.headers["x-ratelimit-remaining"].to_i == 0 then # Rate limit reached
             time_reset = Time.at(resp.headers["x-ratelimit-remaining"].to_i)
             time_now = Time.now()
@@ -82,6 +82,7 @@ module ::Jobs
             Jobs.enqueue_in(wait_before_retry, :delete_post_and_sync, args)
           end
         else # Other issues
+          Rails.logger.error "An error occurred when trying to delete/edit '#{topic_name || Topic.find_by(id: topic_id).title}' with error code #{resp.status}: #{resp.body}"
           # Retry job
           Jobs.enqueue_in(60, :delete_post_and_sync, args) # Wait 60 seconds
         end
