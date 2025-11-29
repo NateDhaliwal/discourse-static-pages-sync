@@ -91,7 +91,7 @@ module ::Jobs
       post_id = args[:post_id]
       operation = args[:operation]
       topic_id = args[:topic_id]
-      puts topic_id
+      puts "ID: " + topic_id
       topic_slug = args[:topic_slug] || Topic.find_by(id: topic_id).slug.to_s
       category_id = args[:category_id] || Topic.find_by(id: topic_id).category_id.to_i
       category_slug = Category.find_by(id: category_id).slug
