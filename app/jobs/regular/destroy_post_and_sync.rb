@@ -69,7 +69,7 @@ module ::Jobs
         puts "TN: " + topic_name_arg.to_s
         if resp.status == 200 then
           if SiteSetting.log_when_post_uploaded then
-            Rails.logger.info "Topic '#{topic_name || Topic.find_by(id: topic_id).title}' has been deleted/edited"
+            Rails.logger.info "Topic '#{topic_name_arg || Topic.find_by(id: topic_id).title}' has been deleted/edited"
           end
         elsif resp.status == 422 then # Job failed
           Rails.logger.error "An error occurred when trying to delete/edit '#{topic_name_arg || Topic.find_by(id: topic_id).title}' with error code #{resp.status}: #{resp.body}"
