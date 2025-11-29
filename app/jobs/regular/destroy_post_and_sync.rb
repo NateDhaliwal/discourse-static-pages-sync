@@ -262,7 +262,10 @@ module ::Jobs
         # TODO: Maybe allow different file extensions?
         replies_file_path = replies_file_path.sub(".md", "") # Remove '.md.' from the back
         puts "Path: " + replies_file_path.to_s
-        synced_replies_list = JSON.parse(conn.get("/repos/#{repo_user}/#{repo_name}/contents/#{replies_file_path}").body)
+        resp = conn.get("/repos/#{repo_user}/#{repo_name}/contents/#{replies_file_path}")
+        puts resp.body
+        puts resp.status
+        synced_replies_list = JSON.parse(resp.body)
         synced_replies_list.each do |reply_file|
           # Format: https://api.github.com/repos/NateDhaliwal/ENDPOINT-discourse-static-pages-sync/contents/site-feedback
           reply_file_path = replies_file_path + reply_file["name"].to_s
