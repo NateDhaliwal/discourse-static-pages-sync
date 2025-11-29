@@ -38,7 +38,7 @@ module ::Jobs
         return sha
       end
   
-      def delete_file(file_path, sha_arg=nil, topic_id, args)
+      def delete_file(file_path, sha_arg=nil, topic_id=nil, topic_name=nil, args)
         target_repo = SiteSetting.target_github_repo
         repo_user = target_repo.split("https://github.com/")[1].split("/")[0]
         repo_name = target_repo.split("https://github.com/")[1].split("/")[1]
@@ -69,10 +69,10 @@ module ::Jobs
   
         if resp.status == 200 then
           if SiteSetting.log_when_post_uploaded then
-            Rails.logger.info "Topic '#{Topic.find_by(id: topic_id).title}' has been deleted/edited"
+            Rails.logger.info "Topic '#{topic_name || Topic.find_by(id: topic_id).title}' has been deleted/edited"
           end
         elsif resp.status == 422 then # Job failed
-          Rails.logger.error "An error occurred when trying to delete/edit '#{Topic.find_by(id: topic_id).title}': #{resp.body}"
+          Rails.logger.error "An error occurred when trying to delete/edit '#{topic_name || Topic.find_by(id: topic_id).title}': #{resp.body}"
           if resp.headers["x-ratelimit-remaining"].to_i == 0 then # Rate limit reached
             time_reset = Time.at(resp.headers["x-ratelimit-remaining"].to_i)
             time_now = Time.now()
@@ -95,6 +95,7 @@ module ::Jobs
       topic_id = args[:topic_id]
       puts "ID: " + topic_id.to_s
       topic_slug = args[:topic_slug] || Topic.find_by(id: topic_id).slug.to_s
+      topic_name = args[:topic_name] || Topic.find_by(id: topic_id).title.to_s
       category_id = args[:category_id] || Topic.find_by(id: topic_id).category_id.to_i
       category_slug = Category.find_by(id: category_id).slug
 
@@ -127,11 +128,11 @@ module ::Jobs
         return if !post_edits["title_changes"]["side_by_side"]
         
         old_topic_title = post_edits["title_changes"]["side_by_side"].to_s
-          &.split("<div class=\"revision-content\"><div>")[1]
-          &.split("</div></div><div class=\"revision-content\">")[0]
-          &.split("</div></div>")[0]
-          &.sub("<del>", "")
-          &.sub("</del>", "")
+          .split("<div class=\"revision-content\"><div>")[1]
+          .split("</div></div><div class=\"revision-content\">")[0]
+          .split("</div></div>")[0]
+          .sub("<del>", "")
+          .sub("</del>", "")
         # Discourse's in-built Slug
         old_topic_slug = Slug.for(old_topic_title)
         if old_file_path.include? "@{topic_slug}" then
@@ -243,7 +244,7 @@ module ::Jobs
 
         puts "dt_fp: " + file_path
         
-        delete_file(file_path, topic_id=topic_id, args=args)
+        delete_file(file_path, topic_name=topic_name, args=args)
 
         # Delete replies
         replies_file_path = SiteSetting.reply_post_path
