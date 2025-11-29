@@ -262,6 +262,7 @@ module ::Jobs
         # TODO: Maybe allow different file extensions?
         replies_file_path = replies_file_path.sub(".md", "") # Remove '.md.' from the back
         puts "Path: " + replies_file_path.to_s
+        puts "/repos/#{repo_user}/#{repo_name}/contents/#{replies_file_path}"
         resp = conn.get("/repos/#{repo_user}/#{repo_name}/contents/#{replies_file_path}")
         puts resp.body
         puts resp.status
