@@ -126,9 +126,9 @@ after_initialize do
       :destroy_post_and_sync,
       post_type: "topic",
       operation: "delete_topic",
-      topic_slug: topic.slug,
-      topic_name: topic.title
-      category_id: topic.category_id,
+      topic_slug: topic.slug.to_s,
+      topic_name: topic.title.to_s,
+      category_id: topic.category_id.to_i,
       post_number: 1
     )
   end
