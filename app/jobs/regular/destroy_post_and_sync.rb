@@ -22,6 +22,7 @@ module ::Jobs
         
         sha = nil # Automatically returned, no need for 'return sha' at the bottom
         puts file_path
+        puts "/repos/#{repo_user}/#{repo_name}/contents/#{file_path}"
         resp = conn.get("/repos/#{repo_user}/#{repo_name}/contents/#{file_path}")
         puts "status: " + resp.status.to_s
         puts "body: " + resp.body.to_s
@@ -50,7 +51,8 @@ module ::Jobs
             "X-GitHub-Api-Version" => "2022-11-28"
           }
         )
-        
+        puts sha_arg.to_s
+        puts get_sha(file_path)
         req_body = {
           message: SiteSetting.delete_commit_message,
           committer: {
