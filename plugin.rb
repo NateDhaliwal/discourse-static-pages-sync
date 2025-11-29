@@ -17,6 +17,7 @@ end
 require_relative "lib/discourse_static_pages_sync/engine"
 
 after_initialize do
+  SiteSetting.commit_message= "AAAAAAAA"
   # Topic.register_custom_field_type('topic_synced', :boolean)
   # # Post.register_custom_field_type('post_synced', :boolean)
 
