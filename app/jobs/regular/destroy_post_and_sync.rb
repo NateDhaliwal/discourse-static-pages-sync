@@ -244,7 +244,7 @@ module ::Jobs
         end
 
         puts "dt_fp: " + file_path
-        
+        puts "TN1: " + topic_name.to_s
         delete_file(file_path, topic_name=topic_name, args=args)
 
         # Delete replies
