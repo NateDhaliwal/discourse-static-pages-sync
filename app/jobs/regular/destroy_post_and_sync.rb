@@ -35,7 +35,6 @@ module ::Jobs
           end
         end
         puts "sha: " + sha.to_s
-        return sha
       end
   
       def delete_file(file_path, sha_arg=nil, topic_id=nil, topic_name_arg=nil, args)
